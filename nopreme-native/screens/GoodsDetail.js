@@ -8,6 +8,7 @@ import { getGoodsName } from "../utils/enum";
 import ImgBGScroll from "../components/ImgBGScroll";
 import Stack from "../components/Stack";
 import Badge from "../components/Badge";
+import Grid from "../components/Grid";
 import ItemCard from "../containers/ItemCard";
 
 const styles = StyleSheet.create({
@@ -26,17 +27,12 @@ const styles = StyleSheet.create({
   collectButton: {
     backgroundColor: "#7755CC",
     paddingVertical: 8,
-    paddingHorizontal: 27,
+    paddingHorizontal: 16,
     borderRadius: 18,
   },
   collectButtonText: {
     color: "white",
     fontSize: 16,
-  },
-  itemList: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
   },
 });
 
@@ -66,7 +62,7 @@ function GoodsDetail({ navigation, viewer }) {
           style={{ fontSize: 16, color: "#333333" }}
         >{`${items.edges.length} 종`}</Text>
 
-        <Stack style={styles.itemList}>
+        <Grid style={{ gap: 10 }} numCross={3}>
           {items.edges.map(
             ({
               node: {
@@ -83,7 +79,7 @@ function GoodsDetail({ navigation, viewer }) {
               />
             )
           )}
-        </Stack>
+        </Grid>
       </Stack>
     </ImgBGScroll>
   );
