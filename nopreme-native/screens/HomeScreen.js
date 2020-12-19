@@ -9,8 +9,6 @@ const styles = StyleSheet.create({
 });
 
 function HomeScreen({ viewer }) {
-  if (viewer) console.log(`viewer: ${JSON.stringify(viewer)}`);
-
   return (
     <View style={styles.container}>
       <Text>Home Screen</Text>

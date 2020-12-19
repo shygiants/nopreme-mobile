@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 
+import { LanguageContext } from "../contexts/LanguageContext";
 import Stack from "../components/Stack";
 import Image from "../components/Image";
 import Badge from "../components/Badge";
-import kr from "../assets/lang/kr.json";
 
 const styles = StyleSheet.create({
   container: { flexDirection: "column", borderWidth: 0 },
@@ -15,6 +15,7 @@ const styles = StyleSheet.create({
 });
 
 export default function EventCard({ title, type, img, onPress }) {
+  const langCtx = useContext(LanguageContext);
   return (
     <TouchableOpacity onPress={onPress}>
       <Stack style={StyleSheet.compose(styles.container, { gap: 10 })}>
@@ -24,7 +25,7 @@ export default function EventCard({ title, type, img, onPress }) {
             <Badge text={type} />
           </View>
           <Text style={styles.titleText}>{title}</Text>
-          <Text style={styles.subText}>{kr.goods} 2</Text>
+          <Text style={styles.subText}>{langCtx.dictionary.goods} 2</Text>
         </Stack>
       </Stack>
     </TouchableOpacity>

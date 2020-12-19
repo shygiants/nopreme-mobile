@@ -1,16 +1,14 @@
-import React, { Fragment } from "react";
+import React, { useContext } from "react";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { graphql, createFragmentContainer } from "react-relay";
 
 import { createQueryRenderer } from "../relay";
-
+import { LanguageContext } from "../contexts/LanguageContext";
 import { getGoodsName } from "../utils/enum";
 import ImgBGScroll from "../components/ImgBGScroll";
 import Stack from "../components/Stack";
 import Badge from "../components/Badge";
 import ItemCard from "../containers/ItemCard";
-
-import kr from "../assets/lang/kr.json";
 
 const styles = StyleSheet.create({
   container: {
@@ -43,7 +41,7 @@ const styles = StyleSheet.create({
 });
 
 function GoodsDetail({ navigation, viewer }) {
-  console.log(viewer);
+  const langCtx = useContext(LanguageContext);
   const { goods, items } = viewer;
   return (
     <ImgBGScroll
@@ -59,7 +57,9 @@ function GoodsDetail({ navigation, viewer }) {
         <Text style={styles.eventText}>{goods.event.name}</Text>
         <View style={{ flexDirection: "row" }}>
           <TouchableOpacity style={styles.collectButton}>
-            <Text style={styles.collectButtonText}>{kr.collect}</Text>
+            <Text style={styles.collectButtonText}>
+              {langCtx.dictionary.collect}
+            </Text>
           </TouchableOpacity>
         </View>
         <Text

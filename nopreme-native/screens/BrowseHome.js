@@ -1,13 +1,12 @@
-import React from "react";
+import React, { useContext } from "react";
 import { StyleSheet, Text, ScrollView, SafeAreaView } from "react-native";
 import { graphql, createFragmentContainer } from "react-relay";
 
 import { createQueryRenderer } from "../relay";
+import { LanguageContext } from "../contexts/LanguageContext";
 import Stack from "../components/Stack";
 import EventCard from "../containers/EventCard";
 import { getEventName } from "../utils/enum";
-
-import kr from "../assets/lang/kr.json";
 
 const styles = StyleSheet.create({
   scroll: { height: "100%" },
@@ -16,13 +15,13 @@ const styles = StyleSheet.create({
 });
 
 function BrowseHome({ navigation, viewer }) {
-  if (viewer) console.log(`viewer: ${JSON.stringify(viewer)}`);
+  const langCtx = useContext(LanguageContext);
 
   return (
     <SafeAreaView>
       <ScrollView style={styles.scroll}>
         <Stack style={StyleSheet.compose(styles.container, { gap: 16 })}>
-          <Text style={styles.eventText}>{kr.event}</Text>
+          <Text style={styles.eventText}>{langCtx.dictionary.event}</Text>
           <ScrollView
             showsHorizontalScrollIndicator={false}
             style={{ width: "100%" }}
