@@ -1,0 +1,41 @@
+{
+  "name": "nopreme-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "babel src -d dist",
+    "watch": "babel src --watch -d dist",
+    "serve-watch": "nodemon ./dist/index.js",
+    "serve": "node ./dist/index.js",
+    "update-schema": "node ./dist/scripts/updateSchema.js",
+    "clean": "rm -rf ./dist"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/cli": "^7.12.7",
+    "@babel/core": "^7.12.7",
+    "@babel/plugin-transform-runtime": "^7.12.1",
+    "@babel/preset-env": "^7.12.7",
+    "babel-plugin-inline-json-import": "^0.3.2",
+    "dotenv": "^8.2.0"
+  },
+  "dependencies": {
+    "@google-cloud/storage": "^5.7.0",
+    "express": "^4.17.1",
+    "express-graphql": "^0.12.0",
+    "express-jwt": "^6.0.0",
+    "graphql": "^15.4.0",
+    "graphql-relay": "^0.6.0",
+    "jsonwebtoken": "^8.5.1",
+    "moment-timezone": "^0.5.32",
+    "mongoose": "^5.10.15",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.2",
+    "node-fetch": "^2.6.1",
+    "unique-names-generator": "^4.3.1",
+    "uuid": "^8.3.2"
+  }
+}

@@ -1,0 +1,15 @@
+[
+  {
+    "name": "앨범 발매",
+    "value": "ALBUM"
+  },
+  {
+    "name": "리리이베",
+    "value": "RELEASE_EVENT"
+  },
+  { "name": "콘서트 DVD/BD 발매", "value": "LIVE" },
+  {
+    "name": "콘서트",
+    "value": "CONCERT"
+  }
+]

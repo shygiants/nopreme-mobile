@@ -1,0 +1,2 @@
+mongodump --host nopreme-shard-0/nopreme-shard-00-00-hezsg.gcp.mongodb.net:27017,nopreme-shard-00-01-hezsg.gcp.mongodb.net:27017,nopreme-shard-00-02-hezsg.gcp.mongodb.net:27017 --ssl --username shygiants --password BcffTmRYlIzndIMT --authenticationDatabase admin --db nopreme
+mongorestore --username shygiants --password sbWrVtkjyjsxkKK4Csgq --authenticationDatabase admin
