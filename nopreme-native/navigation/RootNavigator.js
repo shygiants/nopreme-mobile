@@ -1,31 +1,39 @@
 import * as React from "react";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import {
+  createStackNavigator,
+  TransitionPresets,
+} from "@react-navigation/stack";
 
-// import TabBarIcon from "../components/TabBarIcon";
-import BrowseTab from "./BrowseTab";
+import BottomTabNavigator from "./BottomTabNavigator";
+// import ItemPicker from "../screens/ItemPicker";
+import ItemPickerNavigator from "./ItemPickerNavigator";
 
-const BottomTab = createBottomTabNavigator();
+const Modal = createStackNavigator();
 
 export default function RootNavigator({ navigation, route }) {
-  // Set the header title on the parent stack navigator depending on the
-  // currently active tab. Learn more in the documentation:
-  // https://reactnavigation.org/docs/en/screen-options-resolution.html
-
   return (
-    <BottomTab.Navigator
-      initialRouteName="Browse"
-      //   tabBarOptions={{
-      //     activeTintColor: colors.primary,
-      //     showLabel: false,
-      //   }}
-    >
-      <BottomTab.Screen
-        name="Browse"
-        component={BrowseTab}
-        // options={{
-        //   tabBarIcon: ({ color }) => <TabBarIcon color={color} name="md-search" />,
-        // }}
+    <Modal.Navigator mode="modal" screenOptions={{ headerShown: false }}>
+      <Modal.Screen name="Tabs" component={BottomTabNavigator} />
+      <Modal.Screen
+        name="ItemPicker"
+        component={ItemPickerNavigator}
+        options={{
+          ...TransitionPresets.ModalSlideFromBottomIOS,
+          //   headerShown: true,
+          //   headerBackTitleVisible: false,
+          //   headerLeftContainerStyle: {
+          //     paddingHorizontal: 8,
+          //   },
+          //   headerRightContainerStyle: {
+          //     paddingHorizontal: 8,
+          //   },
+          //   headerStyle: {
+          //     shadowOffset: { width: 0, height: 0 },
+          //   },
+          //   headerTintColor: "black",
+          gestureEnabled: false,
+        }}
       />
-    </BottomTab.Navigator>
+    </Modal.Navigator>
   );
 }

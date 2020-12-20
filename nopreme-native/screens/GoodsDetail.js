@@ -36,9 +36,12 @@ const styles = StyleSheet.create({
   },
 });
 
-function GoodsDetail({ navigation, viewer }) {
+function GoodsDetail({ navigation, route, viewer }) {
   const langCtx = useContext(LanguageContext);
   const { goods, items } = viewer;
+
+  console.log(route.params);
+
   return (
     <ImgBGScroll
       navigation={navigation}
@@ -52,7 +55,17 @@ function GoodsDetail({ navigation, viewer }) {
         <Text style={styles.titleText}>{goods.name}</Text>
         <Text style={styles.eventText}>{goods.event.name}</Text>
         <View style={{ flexDirection: "row" }}>
-          <TouchableOpacity style={styles.collectButton}>
+          <TouchableOpacity
+            style={styles.collectButton}
+            onPress={() =>
+              navigation.navigate("ItemPicker", {
+                screen: "PickWish",
+                params: {
+                  goodsId: goods.goodsId,
+                },
+              })
+            }
+          >
             <Text style={styles.collectButtonText}>
               {langCtx.dictionary.collect}
             </Text>

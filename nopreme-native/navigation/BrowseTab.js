@@ -1,6 +1,5 @@
 import * as React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import { LinearGradient } from "expo-linear-gradient";
 
 import BrowseHome from "../screens/BrowseHome";
 import EventDetail from "../screens/EventDetail";
@@ -23,6 +22,9 @@ export default function BrowseTab() {
           headerTitle: null,
           headerTransparent: true,
           headerBackTitleVisible: false,
+          headerLeftContainerStyle: {
+            paddingHorizontal: 8,
+          },
         }}
       />
       <Stack.Screen
@@ -32,6 +34,9 @@ export default function BrowseTab() {
           headerTitle: null,
           headerTransparent: true,
           headerBackTitleVisible: false,
+          headerLeftContainerStyle: {
+            paddingHorizontal: 8,
+          },
         }}
       />
     </Stack.Navigator>

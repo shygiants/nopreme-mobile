@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from "react";
 import {
-  Button,
   StyleSheet,
-  Text,
   View,
   ScrollView,
-  SafeAreaView,
   useWindowDimensions,
 } from "react-native";
 import { useHeaderHeight } from "@react-navigation/stack";

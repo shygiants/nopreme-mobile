@@ -5,7 +5,7 @@ import Image from "../components/Image";
 
 const styles = StyleSheet.create({
   image: {
-    width: 106,
+    width: 109,
     borderRadius: 12,
   },
 });
