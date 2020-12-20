@@ -1,7 +1,7 @@
 import { GraphQLSchema, GraphQLObjectType } from "graphql";
 
 import { nodeField, GraphQLViewer, GraphQLAdmin } from "./nodes";
-import { getUserById } from "../db-schema/User";
+
 import { AddGroupMutation } from "./mutations/AddGroupMutation";
 import { ModifyGroupMutation } from "./mutations/ModifyGroupMutation";
 import { RemoveGroupMutation } from "./mutations/RemoveGroupMutation";
@@ -17,6 +17,7 @@ import { RemoveGoodsMutation } from "./mutations/RemoveGoodsMutation";
 import { AddItemMutation } from "./mutations/AddItemMutation";
 import { ModifyItemMutation } from "./mutations/ModifyItemMutation";
 import { RemoveItemMutation } from "./mutations/RemoveItemMutation";
+import { AddCollectionMutation } from "./mutations/AddCollectionMutation";
 
 const Query = new GraphQLObjectType({
   name: "Query",
@@ -51,6 +52,7 @@ const Mutation = new GraphQLObjectType({
     addItem: AddItemMutation,
     modifyItem: ModifyItemMutation,
     removeItem: RemoveItemMutation,
+    addCollection: AddCollectionMutation,
   },
 });
 

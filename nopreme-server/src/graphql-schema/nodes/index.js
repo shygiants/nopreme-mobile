@@ -30,6 +30,19 @@ import {
 } from "../../db-schema/Event";
 import { getGoodsById, Goods, getGoodsCollection } from "../../db-schema/Goods";
 import { getItemById, Item, getItems } from "../../db-schema/Item";
+import {
+  getCollectionById,
+  Collection,
+  getCollectionByIds,
+} from "../../db-schema/Collection";
+import { getWishById, Wish, getWishObj } from "../../db-schema/Wish";
+import {
+  getPosessionById,
+  Posession,
+  getPosessionObj,
+} from "../../db-schema/Posession";
+
+const SEPARATOR = "-";
 
 export const { nodeInterface, nodeField } = nodeDefinitions(
   async (globalId) => {
@@ -48,6 +61,18 @@ export const { nodeInterface, nodeField } = nodeDefinitions(
         return await getGoodsById({ _id: id });
       case "Item":
         return await getItemById({ _id: id });
+      case "Collection":
+        const [goodsId, userId] = id.split(SEPARATOR);
+        const collection = await getCollectionByIds({ goodsId, userId });
+        return collection === null || !collection.intent
+          ? { goods: goodsId, user: userId }
+          : collection;
+      case "Wish":
+        const [itemId, userId] = id.split(SEPARATOR);
+        return await getWishObj({ itemId, userId });
+      case "Posession":
+        const [itemId, userId] = id.split(SEPARATOR);
+        return await getPosessionObj({ itemId, userId });
       case "Admin":
         return new Admin();
       case "Viewer":
@@ -66,6 +91,9 @@ export const { nodeInterface, nodeField } = nodeDefinitions(
     else if (obj instanceof Goods) return GraphQLGoods;
     else if (obj instanceof Item) return GraphQLItem;
     else if (obj instanceof Viewer) return GraphQLViewer;
+    else if (obj instanceof Collection) return GraphQLCollection;
+    else if (obj instanceof Wish) return GraphQLWish;
+    else if (obj instanceof Posession) return GraphQLPosession;
     else throw "no supported type";
   }
 );
@@ -88,30 +116,18 @@ export const GraphQLArtist = new GraphQLObjectType({
   interfaces: [nodeInterface],
 });
 
-export const GraphQLEvent = new GraphQLObjectType({
-  name: "Event",
-  fields: require("./Event").default,
-  interfaces: [nodeInterface],
-});
-
-export const GraphQLGoods = new GraphQLObjectType({
-  name: "Goods",
-  fields: require("./Goods").default,
-  interfaces: [nodeInterface],
-});
-
-export const GraphQLItem = new GraphQLObjectType({
-  name: "Item",
-  fields: require("./Item").default,
-  interfaces: [nodeInterface],
-});
-
 export const {
   connectionType: ArtistConnection,
   edgeType: GraphQLArtistEdge,
 } = connectionDefinitions({
   name: "Artist",
   nodeType: GraphQLArtist,
+});
+
+export const GraphQLEvent = new GraphQLObjectType({
+  name: "Event",
+  fields: require("./Event").default,
+  interfaces: [nodeInterface],
 });
 
 export const {
@@ -122,6 +138,12 @@ export const {
   nodeType: GraphQLEvent,
 });
 
+export const GraphQLGoods = new GraphQLObjectType({
+  name: "Goods",
+  fields: require("./Goods").default,
+  interfaces: [nodeInterface],
+});
+
 export const {
   connectionType: GoodsConnection,
   edgeType: GraphQLGoodsEdge,
@@ -130,12 +152,60 @@ export const {
   nodeType: GraphQLGoods,
 });
 
+export const GraphQLItem = new GraphQLObjectType({
+  name: "Item",
+  fields: require("./Item").default,
+  interfaces: [nodeInterface],
+});
+
 export const {
   connectionType: ItemConnection,
   edgeType: GraphQLItemEdge,
 } = connectionDefinitions({
   name: "Item",
   nodeType: GraphQLItem,
+});
+
+export const GraphQLWish = new GraphQLObjectType({
+  name: "Wish",
+  fields: require("./Wish").default,
+  interfaces: [nodeInterface],
+});
+
+export const {
+  connectionType: WishConnection,
+  edgeType: GraphQLWishEdge,
+} = connectionDefinitions({
+  name: "Wish",
+  nodeType: GraphQLWish,
+});
+
+export const GraphQLPosession = new GraphQLObjectType({
+  name: "Posession",
+  fields: require("./Posession").default,
+  interfaces: [nodeInterface],
+});
+
+export const {
+  connectionType: PosessionConnection,
+  edgeType: GraphQLPosessionEdge,
+} = connectionDefinitions({
+  name: "Posession",
+  nodeType: GraphQLPosession,
+});
+
+export const GraphQLCollection = new GraphQLObjectType({
+  name: "Collection",
+  fields: require("./Collection").default,
+  interfaces: [nodeInterface],
+});
+
+export const {
+  connectionType: CollectionConnection,
+  edgeType: GraphQLCollectionEdge,
+} = connectionDefinitions({
+  name: "Collection",
+  nodeType: GraphQLCollection,
 });
 
 class Admin {}
@@ -360,6 +430,21 @@ export const GraphQLViewer = new GraphQLObjectType({
           first,
           last,
         });
+      },
+    },
+    collection: {
+      type: GraphQLCollection,
+      args: {
+        goodsId: {
+          type: new GraphQLNonNull(GraphQLID),
+        },
+      },
+      resolve: async (root, { goodsId }, { user: { id } }) => {
+        const collection = await getCollectionByIds({ goodsId, userId: id });
+
+        return collection && collection.intent
+          ? collection
+          : { goods: goodsId, user: id };
       },
     },
   },

@@ -19,7 +19,8 @@ export default {
   },
   img: {
     type: GraphQLImage,
-    resolve: (goods) => (goods.img ? getImageById({ _id: goods.img }) : null),
+    resolve: async (goods) =>
+      goods.img ? await getImageById({ _id: goods.img }) : null,
   },
   width: {
     type: GraphQLInt,
@@ -31,7 +32,7 @@ export default {
   },
   event: {
     type: GraphQLEvent,
-    resolve: (goods) =>
-      goods.event ? getEventById({ _id: goods.event }) : null,
+    resolve: async (goods) =>
+      goods.event ? await getEventById({ _id: goods.event }) : null,
   },
 };

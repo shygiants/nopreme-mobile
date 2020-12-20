@@ -13,9 +13,9 @@ export default {
   },
   img: {
     type: GraphQLImage,
-    resolve: (artist) =>
+    resolve: async (artist) =>
       artist.img && artist.img.length > 0
-        ? getImageById({ _id: artist.img[0] })
+        ? await getImageById({ _id: artist.img[0] })
         : null,
   },
   name: {

@@ -1,0 +1,14 @@
+[
+  {
+    "name": "교환",
+    "value": "EXCHANGE"
+  },
+  {
+    "name": "양도",
+    "value": "GIVEAWAY"
+  },
+  {
+    "name": "수정",
+    "value": "CORRECTION"
+  }
+]

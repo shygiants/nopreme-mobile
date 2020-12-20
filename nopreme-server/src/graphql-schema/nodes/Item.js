@@ -22,11 +22,11 @@ export default {
   },
   artist: {
     type: new GraphQLNonNull(new GraphQLList(GraphQLArtist)),
-    resolve: (item) =>
-      item.artist.map((artist) => getArtistById({ _id: artist })),
+    resolve: async (item) =>
+      item.artist.map((artist) => await getArtistById({ _id: artist })),
   },
   img: {
     type: GraphQLImage,
-    resolve: (item) => (item.img ? getImageById({ _id: item.img }) : null),
+    resolve: async (item) => (item.img ? await getImageById({ _id: item.img }) : null),
   },
 };

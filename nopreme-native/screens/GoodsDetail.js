@@ -41,6 +41,7 @@ function GoodsDetail({ navigation, route, viewer }) {
   const { goods, items } = viewer;
 
   console.log(route.params);
+  console.log(viewer.collection.wishes.edges.map(({ node }) => node));
 
   return (
     <ImgBGScroll
@@ -54,23 +55,26 @@ function GoodsDetail({ navigation, route, viewer }) {
         </View>
         <Text style={styles.titleText}>{goods.name}</Text>
         <Text style={styles.eventText}>{goods.event.name}</Text>
-        <View style={{ flexDirection: "row" }}>
-          <TouchableOpacity
-            style={styles.collectButton}
-            onPress={() =>
-              navigation.navigate("ItemPicker", {
-                screen: "PickWish",
-                params: {
-                  goodsId: goods.goodsId,
-                },
-              })
-            }
-          >
-            <Text style={styles.collectButtonText}>
-              {langCtx.dictionary.collect}
-            </Text>
-          </TouchableOpacity>
-        </View>
+        {/* <Text>{JSON.stringify(viewer.collection)}</Text> */}
+        {viewer.collection.collecting || (
+          <View style={{ flexDirection: "row" }}>
+            <TouchableOpacity
+              style={styles.collectButton}
+              onPress={async () =>
+                navigation.navigate("ItemPicker", {
+                  screen: "PickWish",
+                  params: {
+                    goodsId: goods.goodsId,
+                  },
+                })
+              }
+            >
+              <Text style={styles.collectButtonText}>
+                {langCtx.dictionary.collect}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
         <Text
           style={{ fontSize: 16, color: "#333333" }}
         >{`${items.edges.length} 종`}</Text>
@@ -144,6 +148,58 @@ const FragmentContainer = createFragmentContainer(GoodsDetail, {
               id
               imageId
               src
+            }
+          }
+        }
+      }
+      collection(goodsId: $goodsId) {
+        id
+        collecting
+        goods {
+          id
+          goodsId
+          name
+        }
+        user {
+          id
+          userId
+          name
+        }
+        wishes(
+          first: 2147483647 # max GraphQLInt
+        ) @connection(key: "GoodsDetail_wishes") {
+          edges {
+            node {
+              id
+              item {
+                id
+                itemId
+                artist {
+                  id
+                  name
+                }
+                idx
+              }
+              num
+            }
+          }
+        }
+        posessions(
+          first: 2147483647 # max GraphQLInt
+        ) @connection(key: "GoodsDetail_posessions") {
+          edges {
+            node {
+              id
+              item {
+                id
+                itemId
+                artist {
+                  id
+                  name
+                }
+                idx
+              }
+              num
             }
           }
         }

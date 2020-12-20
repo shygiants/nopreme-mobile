@@ -18,6 +18,7 @@ type Viewer implements Node {
   goodsCollection(artistName: String!, eventId: ID!, after: String, first: Int, before: String, last: Int): GoodsConnection!
   goods(goodsId: ID!): Goods!
   items(goodsId: ID!, after: String, first: Int, before: String, last: Int): ItemConnection!
+  collection(goodsId: ID!): Collection
 }
 
 """An object with an ID"""
@@ -149,6 +150,68 @@ type Artist implements Node {
   birthday: String!
 }
 
+type Collection implements Node {
+  """The ID of an object"""
+  id: ID!
+  collecting: Boolean!
+  goods: Goods!
+  user: User!
+  wishes(after: String, first: Int, before: String, last: Int): WishConnection!
+  posessions(after: String, first: Int, before: String, last: Int): PosessionConnection!
+}
+
+"""A connection to a list of items."""
+type WishConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [WishEdge]
+}
+
+"""An edge in a connection."""
+type WishEdge {
+  """The item at the end of the edge"""
+  node: Wish
+
+  """A cursor for use in pagination"""
+  cursor: String!
+}
+
+type Wish implements Node {
+  """The ID of an object"""
+  id: ID!
+  item: Item!
+  user: User!
+  num: Int!
+}
+
+"""A connection to a list of items."""
+type PosessionConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [PosessionEdge]
+}
+
+"""An edge in a connection."""
+type PosessionEdge {
+  """The item at the end of the edge"""
+  node: Posession
+
+  """A cursor for use in pagination"""
+  cursor: String!
+}
+
+type Posession implements Node {
+  """The ID of an object"""
+  id: ID!
+  item: Item!
+  user: User!
+  num: Int!
+}
+
 type Admin implements Node {
   """The ID of an object"""
   id: ID!
@@ -194,6 +257,7 @@ type Mutation {
   addItem(input: AddItemInput!): AddItemPayload
   modifyItem(input: ModifyItemInput!): ModifyItemPayload
   removeItem(input: RemoveItemInput!): RemoveItemPayload
+  addCollection(input: AddCollectionInput!): AddCollectionPayload
 }
 
 type AddGroupPayload {
@@ -380,4 +444,30 @@ type RemoveItemPayload {
 input RemoveItemInput {
   itemId: ID!
   clientMutationId: String
+}
+
+type AddCollectionPayload {
+  collectionEdge: CollectionEdge!
+  clientMutationId: String
+}
+
+"""An edge in a connection."""
+type CollectionEdge {
+  """The item at the end of the edge"""
+  node: Collection
+
+  """A cursor for use in pagination"""
+  cursor: String!
+}
+
+input AddCollectionInput {
+  goodsId: ID!
+  wishes: [ItemPick]!
+  posessions: [ItemPick]!
+  clientMutationId: String
+}
+
+input ItemPick {
+  itemId: ID!
+  num: Int!
 }

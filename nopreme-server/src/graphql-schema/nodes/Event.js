@@ -13,7 +13,8 @@ export default {
   },
   img: {
     type: GraphQLImage,
-    resolve: (event) => (event.img ? getImageById({ _id: event.img }) : null),
+    resolve: async (event) =>
+      event.img ? await getImageById({ _id: event.img }) : null,
   },
   name: {
     type: new GraphQLNonNull(GraphQLString),

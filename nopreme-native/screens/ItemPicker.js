@@ -11,6 +11,8 @@ import Counter from "../components/Counter";
 import HeaderButton from "../components/HeaderButton";
 import ItemCard from "../containers/ItemCard";
 
+import AddCollectionMutation from "../relay/mutations/AddCollectionMutation";
+
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "white",
@@ -19,7 +21,7 @@ const styles = StyleSheet.create({
   },
 });
 
-function ItemPicker({ navigation, route, viewer }) {
+function ItemPicker({ relay, navigation, route, viewer }) {
   const { items, goods } = viewer;
   const [selected, setSelected] = useState(
     Object.fromEntries(items.edges.map(({ node: { itemId } }) => [itemId, 0]))
@@ -54,13 +56,18 @@ function ItemPicker({ navigation, route, viewer }) {
             disabled={!forwardable()}
             name={pickWish() ? "md-arrow-forward" : "md-checkmark"}
             style={{ color: tintColor }}
-            onPress={() => {
+            onPress={async () => {
               if (pickWish()) {
                 navigation.push("PickPosession", {
                   goodsId: goods.goodsId,
                   wishes: selected,
                 });
               } else {
+                await AddCollectionMutation.commit(relay.environment, {
+                  goodsId: goods.goodsId,
+                  wishes: route.params.wishes,
+                  posessions: selected,
+                });
                 navigation.navigate("GoodsDetail", {
                   goodsId: goods.goodsId,
                   wishes: route.params.wishes,
