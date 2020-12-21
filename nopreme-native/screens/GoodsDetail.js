@@ -1,11 +1,5 @@
 import React, { useContext, useState } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  Pressable,
-} from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { graphql, createFragmentContainer } from "react-relay";
 
 import { createQueryRenderer } from "../relay";
@@ -19,6 +13,7 @@ import Grid from "../components/Grid";
 import Tabs from "../components/Tabs";
 import WishIndicator from "../components/WishIndicator";
 import PosessionIndicator from "../components/PosessionIndicator";
+import ProgressBar from "../components/ProgressBar";
 import ItemCard, { Padding } from "../containers/ItemCard";
 
 const styles = StyleSheet.create({
@@ -55,7 +50,18 @@ function GoodsDetail({ navigation, route, viewer }) {
 
   let wishCards;
   let posessionCards;
+  let fulfilledRatio;
   if (collection.collecting) {
+    const collectionStatus = collection.wishes.edges
+      .map(({ node: { num, fulfilled } }) => ({ num, fulfilled }))
+      .reduce(
+        (accum, { num, fulfilled }) => ({
+          num: accum.num + num,
+          fulfilled: accum.fulfilled + Math.min(fulfilled, num),
+        }),
+        { num: 0, fulfilled: 0 }
+      );
+    fulfilledRatio = collectionStatus.fulfilled / collectionStatus.num;
     wishCards = collection.wishes.edges
       .map(({ node: { item, num, fulfilled } }) => ({ item, num, fulfilled }))
       .filter(({ num }) => num > 0)
@@ -125,6 +131,9 @@ function GoodsDetail({ navigation, route, viewer }) {
             tabIdx={tabIdx}
             onTabChange={setTabIdx}
           />
+        )}
+        {fulfilledRatio !== undefined && (
+          <ProgressBar progress={fulfilledRatio} />
         )}
         <Grid style={{ gap: 10 }} numCross={3} padding={Padding}>
           {collection.collecting ? getTabContent() : allItemCards}
