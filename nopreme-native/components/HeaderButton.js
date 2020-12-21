@@ -8,7 +8,6 @@ export default function HeaderButton({ style, name, disabled, onPress }) {
       name={name}
       style={StyleSheet.compose(
         {
-          marginHorizontal: 8,
           opacity: disabled ? 0.3 : 1,
         },
         style

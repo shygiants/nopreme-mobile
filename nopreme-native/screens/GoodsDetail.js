@@ -115,6 +115,7 @@ function GoodsDetail({ relay, navigation, route, viewer }) {
       navigation={navigation}
       imgSrc={goods.img.src}
       headerTitle={goods.name}
+      onOptionPress={() => console.log("omOptionPress")}
     >
       <Stack style={StyleSheet.compose(styles.container, { gap: 10 })}>
         <View style={{ flexDirection: "row" }}>
@@ -159,11 +160,6 @@ const FragmentContainer = createFragmentContainer(GoodsDetail, {
     fragment GoodsDetail_viewer on Viewer
     @argumentDefinitions(goodsId: { type: "ID!" }) {
       id
-      viewer {
-        id
-        userId
-        name
-      }
       goods(goodsId: $goodsId) {
         id
         goodsId
@@ -171,12 +167,10 @@ const FragmentContainer = createFragmentContainer(GoodsDetail, {
         type
         img {
           id
-          imageId
           src
         }
         event {
           id
-          eventId
           name
         }
         width
@@ -192,13 +186,11 @@ const FragmentContainer = createFragmentContainer(GoodsDetail, {
             itemId
             artist {
               id
-              artistId
               name
             }
             idx
             img {
               id
-              imageId
               src
             }
           }
@@ -207,16 +199,6 @@ const FragmentContainer = createFragmentContainer(GoodsDetail, {
       collection(goodsId: $goodsId) {
         id
         collecting
-        goods {
-          id
-          goodsId
-          name
-        }
-        user {
-          id
-          userId
-          name
-        }
         wishes(
           first: 2147483647 # max GraphQLInt
         ) @connection(key: "GoodsDetail_wishes") {

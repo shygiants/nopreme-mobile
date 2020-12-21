@@ -25,6 +25,9 @@ export default function BrowseTab() {
           headerLeftContainerStyle: {
             paddingHorizontal: 8,
           },
+          headerRightContainerStyle: {
+            paddingHorizontal: 8,
+          },
         }}
       />
       <Stack.Screen
@@ -35,6 +38,9 @@ export default function BrowseTab() {
           headerTransparent: true,
           headerBackTitleVisible: false,
           headerLeftContainerStyle: {
+            paddingHorizontal: 8,
+          },
+          headerRightContainerStyle: {
             paddingHorizontal: 8,
           },
         }}

@@ -10,6 +10,7 @@ import { StatusBar } from "expo-status-bar";
 import { LinearGradient } from "expo-linear-gradient";
 
 import Image from "../components/Image";
+import HeaderButton from "../components/HeaderButton";
 
 const BORDER_RADIUS = 40;
 
@@ -40,12 +41,25 @@ export default function ImgBGScroll({
   imgSrc,
   headerTitle,
   children,
+  onOptionPress,
 }) {
   const [imgShown, setImgShown] = useState(true);
   const [aspectRatio, setAspectRatio] = useState(1);
 
   const window = useWindowDimensions();
   const headerHeight = useHeaderHeight();
+
+  function setDefaultHeaderOption() {
+    navigation.setOptions({
+      headerRight: ({ tintColor }) => (
+        <HeaderButton
+          name="md-ellipsis-vertical-sharp"
+          style={{ color: tintColor }}
+          onPress={onOptionPress}
+        />
+      ),
+    });
+  }
 
   function setHeaderTransparent() {
     setImgShown(true);
@@ -79,6 +93,7 @@ export default function ImgBGScroll({
   }
 
   useEffect(() => {
+    setDefaultHeaderOption();
     setHeaderTransparent();
   }, []);
 
