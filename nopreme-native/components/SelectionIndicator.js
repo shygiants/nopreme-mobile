@@ -1,7 +1,8 @@
-import React from "react";
-import { StyleSheet, Text, View, ScrollView, Pressable } from "react-native";
+import React, { useContext } from "react";
+import { StyleSheet, Text, View, Pressable } from "react-native";
 
 import Badge from "./Badge";
+import { LanguageContext } from "../contexts/LanguageContext";
 
 const ACCENT_COLOR = "#7755CC";
 
@@ -37,7 +38,7 @@ const styles = StyleSheet.create({
   wish: {
     position: "absolute",
     left: 7,
-    top: 7,
+    bottom: 7,
     backgroundColor: ACCENT_COLOR,
     borderColor: ACCENT_COLOR,
   },
@@ -53,6 +54,8 @@ export default function SelectionIndicator({
   focus,
   wish,
 }) {
+  const langCtx = useContext(LanguageContext);
+
   return (
     <Pressable onPress={onPress}>
       {children}
@@ -79,7 +82,7 @@ export default function SelectionIndicator({
         <Badge
           badgeStyle={styles.wish}
           badgeTextStyle={styles.wishText}
-          text="희망"
+          text={langCtx.dictionary.wish}
         />
       )}
     </Pressable>

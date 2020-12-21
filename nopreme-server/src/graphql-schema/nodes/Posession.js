@@ -4,6 +4,7 @@ import { GraphQLInt, GraphQLNonNull } from "graphql";
 import { GraphQLItem, GraphQLUser } from ".";
 import { getItemById } from "../../db-schema/Item";
 import { getUserById } from "../../db-schema/User";
+import { getWishObj } from "../../db-schema/Wish";
 
 const SEPARATOR = "-";
 
@@ -21,5 +22,13 @@ export default {
   },
   num: {
     type: new GraphQLNonNull(GraphQLInt),
+  },
+  wished: {
+    type: new GraphQLNonNull(GraphQLInt),
+    resolve: async (posession) =>
+      posession.num === 0
+        ? 0
+        : (await getWishObj({ itemId: posession.item, userId: posession.user }))
+            .num,
   },
 };

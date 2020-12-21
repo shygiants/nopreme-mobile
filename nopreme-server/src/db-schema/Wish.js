@@ -86,5 +86,11 @@ export async function getWishObj({ itemId, userId }) {
   if (collection === null || !collection.intent) {
     return { item: itemId, user: userId, num: 0 };
   }
-  return await getWishByIds({ itemId, userId, collectionId: collection._id });
+  const wish = await getWishByIds({
+    itemId,
+    userId,
+    collectionId: collection._id,
+  });
+
+  return wish ? wish : { item: itemId, user: userId, num: 0 };
 }

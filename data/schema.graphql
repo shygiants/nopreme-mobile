@@ -184,6 +184,7 @@ type Wish implements Node {
   item: Item!
   user: User!
   num: Int!
+  fulfilled: Int!
 }
 
 """A connection to a list of items."""
@@ -210,6 +211,7 @@ type Posession implements Node {
   item: Item!
   user: User!
   num: Int!
+  wished: Int!
 }
 
 type Admin implements Node {

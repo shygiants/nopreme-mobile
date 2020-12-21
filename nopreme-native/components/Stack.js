@@ -18,7 +18,7 @@ export default function Stack({ children, style }) {
     contents = [];
 
     children.forEach((child, idx) => {
-      if (idx !== 0) {
+      if (idx !== 0 && child !== true) {
         contents.push(
           <View
             key={`gap-${idx}`}

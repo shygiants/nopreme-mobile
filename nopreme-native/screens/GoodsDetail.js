@@ -1,5 +1,11 @@
-import React, { useContext } from "react";
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import React, { useContext, useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  Pressable,
+} from "react-native";
 import { graphql, createFragmentContainer } from "react-relay";
 
 import { createQueryRenderer } from "../relay";
@@ -8,8 +14,12 @@ import { getGoodsName } from "../utils/enum";
 import ImgBGScroll from "../components/ImgBGScroll";
 import Stack from "../components/Stack";
 import Badge from "../components/Badge";
+import Button from "../components/Button";
 import Grid from "../components/Grid";
-import ItemCard from "../containers/ItemCard";
+import Tabs from "../components/Tabs";
+import WishIndicator from "../components/WishIndicator";
+import PosessionIndicator from "../components/PosessionIndicator";
+import ItemCard, { Padding } from "../containers/ItemCard";
 
 const styles = StyleSheet.create({
   container: {
@@ -24,24 +34,64 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: "#555555",
   },
-  collectButton: {
-    backgroundColor: "#7755CC",
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 18,
-  },
-  collectButtonText: {
-    color: "white",
-    fontSize: 16,
-  },
+  numItemsText: { fontSize: 16, fontWeight: "bold", color: "#333333" },
 });
 
 function GoodsDetail({ navigation, route, viewer }) {
   const langCtx = useContext(LanguageContext);
-  const { goods, items } = viewer;
+  const [tabIdx, setTabIdx] = useState(0);
 
-  console.log(route.params);
-  console.log(viewer.collection.wishes.edges.map(({ node }) => node));
+  const { goods, items, collection } = viewer;
+  const aspectRatio = goods.width / goods.height;
+
+  function pickItems() {
+    navigation.navigate("ItemPicker", {
+      screen: "PickWish",
+      params: {
+        goodsId: goods.goodsId,
+      },
+    });
+  }
+
+  let wishCards;
+  let posessionCards;
+  if (collection.collecting) {
+    wishCards = collection.wishes.edges
+      .map(({ node: { item, num, fulfilled } }) => ({ item, num, fulfilled }))
+      .filter(({ num }) => num > 0)
+      .map(({ item, num, fulfilled }) => (
+        <WishIndicator key={item.itemId} numWishes={num} fulfilled={fulfilled}>
+          <ItemCard img={item.img.src} aspectRatio={aspectRatio} />
+        </WishIndicator>
+      ));
+    posessionCards = collection.posessions.edges
+      .map(({ node: { item, num, wished } }) => ({ item, num, wished }))
+      .filter(({ num }) => num > 0)
+      .map(({ item, num, wished }) => (
+        <PosessionIndicator
+          key={item.itemId}
+          numPosessions={num}
+          wished={wished}
+        >
+          <ItemCard img={item.img.src} aspectRatio={aspectRatio} />
+        </PosessionIndicator>
+      ));
+  }
+
+  const allItemCards = items.edges.map(({ node: { itemId, img: { src } } }) => (
+    <ItemCard key={itemId} img={src} aspectRatio={aspectRatio} />
+  ));
+
+  function getTabContent() {
+    switch (tabIdx) {
+      case 0:
+        return wishCards;
+      case 1:
+        return posessionCards;
+      case 2:
+        return allItemCards;
+    }
+  }
 
   return (
     <ImgBGScroll
@@ -55,47 +105,29 @@ function GoodsDetail({ navigation, route, viewer }) {
         </View>
         <Text style={styles.titleText}>{goods.name}</Text>
         <Text style={styles.eventText}>{goods.event.name}</Text>
-        {/* <Text>{JSON.stringify(viewer.collection)}</Text> */}
-        {viewer.collection.collecting || (
+
+        {collection.collecting || (
           <View style={{ flexDirection: "row" }}>
-            <TouchableOpacity
-              style={styles.collectButton}
-              onPress={async () =>
-                navigation.navigate("ItemPicker", {
-                  screen: "PickWish",
-                  params: {
-                    goodsId: goods.goodsId,
-                  },
-                })
-              }
-            >
-              <Text style={styles.collectButtonText}>
-                {langCtx.dictionary.collect}
-              </Text>
-            </TouchableOpacity>
+            <Button onPress={pickItems}>{langCtx.dictionary.collect}</Button>
           </View>
         )}
-        <Text
-          style={{ fontSize: 16, color: "#333333" }}
-        >{`${items.edges.length} 종`}</Text>
+        {collection.collecting || (
+          <Text style={styles.numItemsText}>{`${items.edges.length} 종`}</Text>
+        )}
 
-        <Grid style={{ gap: 10 }} numCross={3}>
-          {items.edges.map(
-            ({
-              node: {
-                itemId,
-                artist: [{ name }],
-                idx,
-                img: { src },
-              },
-            }) => (
-              <ItemCard
-                key={itemId}
-                img={src}
-                aspectRatio={goods.width / goods.height}
-              />
-            )
-          )}
+        {collection.collecting && (
+          <Tabs
+            tabTitles={[
+              `희망 ${wishCards.length}`,
+              `보유 ${posessionCards.length}`,
+              `전체 ${items.edges.length}`,
+            ]}
+            tabIdx={tabIdx}
+            onTabChange={setTabIdx}
+          />
+        )}
+        <Grid style={{ gap: 10 }} numCross={3} padding={Padding}>
+          {collection.collecting ? getTabContent() : allItemCards}
         </Grid>
       </Stack>
     </ImgBGScroll>
@@ -174,6 +206,10 @@ const FragmentContainer = createFragmentContainer(GoodsDetail, {
               item {
                 id
                 itemId
+                img {
+                  id
+                  src
+                }
                 artist {
                   id
                   name
@@ -181,6 +217,7 @@ const FragmentContainer = createFragmentContainer(GoodsDetail, {
                 idx
               }
               num
+              fulfilled
             }
           }
         }
@@ -198,8 +235,13 @@ const FragmentContainer = createFragmentContainer(GoodsDetail, {
                   name
                 }
                 idx
+                img {
+                  id
+                  src
+                }
               }
               num
+              wished
             }
           }
         }

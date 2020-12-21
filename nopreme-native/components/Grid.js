@@ -8,7 +8,9 @@ const styles = StyleSheet.create({
   cross: { justifyContent: "space-between" },
 });
 
-export default function Grid({ children, style, numCross }) {
+export default function Grid({ children, style, numCross, padding }) {
+  const PaddingType = padding;
+
   let contents = [];
   let cross = [];
   children.forEach((child, idx) => {
@@ -19,7 +21,15 @@ export default function Grid({ children, style, numCross }) {
     }
   });
 
-  if (cross.length > 0) contents.push(cross);
+  if (cross.length > 0) {
+    const numPaddings = numCross - cross.length;
+
+    for (var i = 0; i < numPaddings; i++) {
+      cross.push(<PaddingType key={`padding-${i}`} />);
+    }
+
+    contents.push(cross);
+  }
 
   const mainStyle = StyleSheet.flatten(StyleSheet.compose(styles.main, style));
 

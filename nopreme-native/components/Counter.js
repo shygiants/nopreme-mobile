@@ -40,7 +40,7 @@ export default function Counter({ name, count, onAdd, onSub }) {
           alignItems: "center",
         }}
       >
-        <Text style={{ fontSize: 24, color: "white", paddingVertical: 12 }}>
+        <Text style={{ fontSize: 24, color: "#DDDDDD", paddingVertical: 12 }}>
           {name}
         </Text>
         <Stack style={StyleSheet.compose(styles.counter, { gap: 32 })}>

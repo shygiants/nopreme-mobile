@@ -20,3 +20,7 @@ export default function ItemCard({ img, aspectRatio }) {
     />
   );
 }
+
+export function Padding() {
+  return <View style={styles.image} />;
+}

@@ -4,8 +4,8 @@ const ObjectId = mongoose.Types.ObjectId;
 
 import PosessionTypes from "../assets/enum/posessionTypes.json";
 
-import { getCollectionById } from "./Collection";
-import { getItems } from "./Item";
+import { getCollectionById, getCollectionByIds } from "./Collection";
+import { getItems, getItemById } from "./Item";
 
 const posessionSchema = new mongoose.Schema({
   item: {
