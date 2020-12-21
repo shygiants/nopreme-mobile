@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { graphql, createFragmentContainer } from "react-relay";
 
@@ -15,6 +15,7 @@ import WishIndicator from "../components/WishIndicator";
 import PosessionIndicator from "../components/PosessionIndicator";
 import ProgressBar from "../components/ProgressBar";
 import ItemCard, { Padding } from "../containers/ItemCard";
+import AddCollectionMutation from "../relay/mutations/AddCollectionMutation";
 
 const styles = StyleSheet.create({
   container: {
@@ -32,7 +33,7 @@ const styles = StyleSheet.create({
   numItemsText: { fontSize: 16, fontWeight: "bold", color: "#333333" },
 });
 
-function GoodsDetail({ navigation, route, viewer }) {
+function GoodsDetail({ relay, navigation, route, viewer }) {
   const langCtx = useContext(LanguageContext);
   const [tabIdx, setTabIdx] = useState(0);
 
@@ -47,6 +48,16 @@ function GoodsDetail({ navigation, route, viewer }) {
       },
     });
   }
+
+  useEffect(() => {
+    if (route.params.wishes && route.params.posessions) {
+      AddCollectionMutation.commit(relay.environment, {
+        goodsId: goods.goodsId,
+        wishes: route.params.wishes,
+        posessions: route.params.posessions,
+      }).then();
+    }
+  }, []);
 
   let wishCards;
   let posessionCards;

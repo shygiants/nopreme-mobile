@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View, ScrollView } from "react-native";
+import { StyleSheet, View, ScrollView } from "react-native";
 import { graphql, createFragmentContainer } from "react-relay";
 import { StatusBar } from "expo-status-bar";
 
@@ -11,8 +11,6 @@ import Counter from "../components/Counter";
 import HeaderButton from "../components/HeaderButton";
 import ItemCard from "../containers/ItemCard";
 
-import AddCollectionMutation from "../relay/mutations/AddCollectionMutation";
-
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "white",
@@ -21,7 +19,7 @@ const styles = StyleSheet.create({
   },
 });
 
-function ItemPicker({ relay, navigation, route, viewer }) {
+function ItemPicker({ navigation, route, viewer }) {
   const { items, goods } = viewer;
   const [selected, setSelected] = useState(
     Object.fromEntries(items.edges.map(({ node: { itemId } }) => [itemId, 0]))
@@ -63,11 +61,6 @@ function ItemPicker({ relay, navigation, route, viewer }) {
                   wishes: selected,
                 });
               } else {
-                await AddCollectionMutation.commit(relay.environment, {
-                  goodsId: goods.goodsId,
-                  wishes: route.params.wishes,
-                  posessions: selected,
-                });
                 navigation.navigate("GoodsDetail", {
                   goodsId: goods.goodsId,
                   wishes: route.params.wishes,
