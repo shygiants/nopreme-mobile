@@ -65,7 +65,6 @@ export default {
         // There is collection
         posessions = await getPosessionsByCollectionId({
           collectionId: collection._id,
-          userId: collection.user,
         });
       } else {
         const items = await getItems({ goodsId: collection.goods });

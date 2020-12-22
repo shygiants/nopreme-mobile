@@ -20,6 +20,10 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
   },
+  dateText: {
+    fontSize: 20,
+    color: "#555555",
+  },
 });
 
 function EventDetail({ navigation, route, viewer }) {
@@ -49,6 +53,7 @@ function EventDetail({ navigation, route, viewer }) {
           <Badge text={getEventName(event.type)} />
         </View>
         <Text style={styles.titleText}>{event.name}</Text>
+        <Text style={styles.dateText}>{event.date}</Text>
         <Stack style={{ gap: 10, paddingTop: 10 }}>
           {goodsCollection.edges.map(
             ({
