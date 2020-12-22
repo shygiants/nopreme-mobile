@@ -43,6 +43,10 @@ export async function getPosessionById({ _id }) {
   return await Posession.findById(_id).exec();
 }
 
+export async function addPosession({ item, user, num, type, coll }) {
+  return await new Posession({ item, user, num, type, coll }).save();
+}
+
 export async function getPosessionNumByIds({ itemId, userId, collectionId }) {
   const result = await Posession.aggregate()
     .match({
@@ -57,10 +61,6 @@ export async function getPosessionNumByIds({ itemId, userId, collectionId }) {
     .exec();
 
   return result.length > 0 ? result[0].num : 0;
-}
-
-export async function addPosession({ item, user, num, type, coll }) {
-  return await new Posession({ item, user, num, type, coll }).save();
 }
 
 export async function getPosessionsByCollectionId({ collectionId }) {
@@ -99,5 +99,31 @@ export async function getPosessionObj({ itemId, userId }) {
       userId,
       collectionId: collection._id,
     }),
+  };
+}
+
+export async function updatePosession({ item, user, num, coll }) {
+  const currNum = await getPosessionNumByIds({
+    itemId: item,
+    userId: user,
+    collectionId: coll,
+  });
+
+  const diff = num - currNum;
+
+  if (diff !== 0) {
+    await addPosession({
+      item,
+      user,
+      num: diff,
+      type: "CORRECTION",
+      coll,
+    });
+  }
+
+  return {
+    item,
+    user,
+    num,
   };
 }

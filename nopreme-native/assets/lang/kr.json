@@ -3,5 +3,13 @@
   "goods": "굿즈",
   "collect": "수집 시작",
   "wish": "희망",
-  "achieved": "달성"
+  "posession": "보유",
+  "total": "전체",
+  "achieved": "달성",
+  "selectWishesTitle": "수집할 아이템 선택",
+  "selectWishes": "희망 아이템 선택",
+  "selectPosessionsTitle": "보유한 아이템 선택",
+  "selectPosessions": "보유 아이템 선택",
+  "reportIncorrect": "잘못된 정보 제보",
+  "updateCollection": "수집 현황 수정"
 }

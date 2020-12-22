@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
 
 export default function ProgressBar({ progress }) {
   const langCtx = useContext(LanguageContext);
-  const percentage = `${progress * 100}%`;
+  const percentage = `${(progress * 100).toFixed(0)}%`;
   return (
     <View style={styles.container}>
       <View

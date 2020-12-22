@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { StyleSheet, View, ScrollView } from "react-native";
 import { graphql, createFragmentContainer } from "react-relay";
 import { StatusBar } from "expo-status-bar";
@@ -10,6 +10,8 @@ import SelectionIndicator from "../components/SelectionIndicator";
 import Counter from "../components/Counter";
 import HeaderButton from "../components/HeaderButton";
 import ItemCard from "../containers/ItemCard";
+import { INTENTS } from "./GoodsDetail";
+import { LanguageContext } from "../contexts/LanguageContext";
 
 const styles = StyleSheet.create({
   container: {
@@ -20,11 +22,8 @@ const styles = StyleSheet.create({
 });
 
 function ItemPicker({ navigation, route, viewer }) {
+  const langCtx = useContext(LanguageContext);
   const { items, goods } = viewer;
-  const [selected, setSelected] = useState(
-    Object.fromEntries(items.edges.map(({ node: { itemId } }) => [itemId, 0]))
-  );
-  const [focus, setFocus] = useState(null);
 
   function forwardable() {
     return Object.entries(selected).some(([_, count]) => count > 0);
@@ -34,15 +33,33 @@ function ItemPicker({ navigation, route, viewer }) {
     return route.name === "PickWish";
   }
 
+  function initialSelected() {
+    if (route.params.intent === INTENTS.UPDATE) {
+      if (pickWish() && route.params.wishes) {
+        return route.params.wishes;
+      } else if (!pickWish() && route.params.posessions) {
+        return route.params.posessions;
+      }
+    }
+
+    return Object.fromEntries(
+      items.edges.map(({ node: { itemId } }) => [itemId, 0])
+    );
+  }
+
+  const [selected, setSelected] = useState(initialSelected());
+  const [focus, setFocus] = useState(null);
+
   function isWish(itemId) {
     return route.params.wishes && route.params.wishes[itemId] > 0;
   }
 
-  // TODO: route.params
   useEffect(
     () =>
       navigation.setOptions({
-        title: pickWish() ? "수집할 아이템 선택" : "보유한 아이템 선택",
+        title: pickWish()
+          ? langCtx.dictionary.selectWishesTitle
+          : langCtx.dictionary.selectPosessionsTitle,
         headerBackImage: ({ tintColor }) => (
           <HeaderButton
             name={pickWish() ? "md-close" : "md-arrow-back"}
@@ -59,12 +76,15 @@ function ItemPicker({ navigation, route, viewer }) {
                 navigation.push("PickPosession", {
                   goodsId: goods.goodsId,
                   wishes: selected,
+                  posessions: route.params.posessions,
+                  intent: route.params.intent,
                 });
               } else {
                 navigation.navigate("GoodsDetail", {
                   goodsId: goods.goodsId,
                   wishes: route.params.wishes,
                   posessions: selected,
+                  intent: route.params.intent,
                 });
               }
             }}
@@ -90,7 +110,10 @@ function ItemPicker({ navigation, route, viewer }) {
           }}
         >
           <Progress
-            steps={["희망 아이템 선택", "보유 아이템 선택"]}
+            steps={[
+              langCtx.dictionary.selectWishes,
+              langCtx.dictionary.selectPosessions,
+            ]}
             currIdx={pickWish() ? 0 : 1}
           />
           <Grid style={{ gap: 10 }} numCross={3}>

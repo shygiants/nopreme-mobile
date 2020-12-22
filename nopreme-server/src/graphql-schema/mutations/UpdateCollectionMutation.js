@@ -1,27 +1,14 @@
 import { mutationWithClientMutationId, offsetToCursor } from "graphql-relay";
-import {
-  GraphQLNonNull,
-  GraphQLID,
-  GraphQLInt,
-  GraphQLList,
-  GraphQLInputObjectType,
-} from "graphql";
+import { GraphQLNonNull, GraphQLID, GraphQLList } from "graphql";
 
 import { GraphQLCollectionEdge } from "../nodes";
-import { addCollection } from "../../db-schema/Collection";
+import { getCollectionByIds } from "../../db-schema/Collection";
 import { upsertWish } from "../../db-schema/Wish";
-import { addPosession } from "../../db-schema/Posession";
+import { updatePosession } from "../../db-schema/Posession";
+import { ItemPick } from "./AddCollectionMutation";
 
-export const ItemPick = new GraphQLInputObjectType({
-  name: "ItemPick",
-  fields: {
-    itemId: { type: new GraphQLNonNull(GraphQLID) },
-    num: { type: new GraphQLNonNull(GraphQLInt) },
-  },
-});
-
-export const AddCollectionMutation = mutationWithClientMutationId({
-  name: "AddCollection",
+export const UpdateCollectionMutation = mutationWithClientMutationId({
+  name: "UpdateCollection",
   inputFields: {
     goodsId: {
       type: new GraphQLNonNull(GraphQLID),
@@ -49,9 +36,9 @@ export const AddCollectionMutation = mutationWithClientMutationId({
     { user: { id } }
   ) => {
     // TODO: Transaction
-    const collection = await addCollection({
-      goods: goodsId,
-      user: id,
+    const collection = await getCollectionByIds({
+      goodsId,
+      userId: id,
     });
 
     await Promise.all(
@@ -67,11 +54,10 @@ export const AddCollectionMutation = mutationWithClientMutationId({
 
     await Promise.all(
       posessions.map(({ itemId, num }) =>
-        addPosession({
+        updatePosession({
           item: itemId,
           user: id,
           num,
-          type: "CORRECTION",
           coll: collection._id,
         })
       )

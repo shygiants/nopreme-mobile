@@ -1,12 +1,13 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { graphql, createFragmentContainer } from "react-relay";
 
 import { createQueryRenderer } from "../relay";
-
+import { LanguageContext } from "../contexts/LanguageContext";
 import ImgBGScroll from "../components/ImgBGScroll";
 import Stack from "../components/Stack";
 import Badge from "../components/Badge";
+import OptionModal from "../components/OptionModal";
 import GoodsListItem from "../containers/GoodsListItem";
 import { getEventName, getGoodsName } from "../utils/enum";
 
@@ -22,6 +23,8 @@ const styles = StyleSheet.create({
 });
 
 function EventDetail({ navigation, route, viewer }) {
+  const langCtx = useContext(LanguageContext);
+  const [modalVisible, setModalVisible] = useState(false);
   const { event, goodsCollection } = viewer;
 
   return (
@@ -29,7 +32,18 @@ function EventDetail({ navigation, route, viewer }) {
       navigation={navigation}
       imgSrc={event.img.src}
       headerTitle={event.name}
+      onOptionPress={() => setModalVisible(true)}
     >
+      <OptionModal
+        visible={modalVisible}
+        onDismiss={() => setModalVisible(false)}
+        options={[
+          {
+            title: langCtx.dictionary.reportIncorrect,
+            onSelect: () => console.log("report"),
+          },
+        ]}
+      />
       <Stack style={StyleSheet.compose(styles.container, { gap: 10 })}>
         <View style={{ flexDirection: "row" }}>
           <Badge text={getEventName(event.type)} />

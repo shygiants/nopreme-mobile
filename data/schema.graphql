@@ -260,6 +260,7 @@ type Mutation {
   modifyItem(input: ModifyItemInput!): ModifyItemPayload
   removeItem(input: RemoveItemInput!): RemoveItemPayload
   addCollection(input: AddCollectionInput!): AddCollectionPayload
+  updateCollection(input: UpdateCollectionInput!): UpdateCollectionPayload
 }
 
 type AddGroupPayload {
@@ -472,4 +473,16 @@ input AddCollectionInput {
 input ItemPick {
   itemId: ID!
   num: Int!
+}
+
+type UpdateCollectionPayload {
+  collectionEdge: CollectionEdge!
+  clientMutationId: String
+}
+
+input UpdateCollectionInput {
+  goodsId: ID!
+  wishes: [ItemPick]!
+  posessions: [ItemPick]!
+  clientMutationId: String
 }

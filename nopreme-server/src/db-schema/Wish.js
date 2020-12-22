@@ -48,7 +48,7 @@ export async function getWishByIds({ itemId, userId, collectionId }) {
   return wishes.length === 0 ? null : wishes[0];
 }
 
-export async function addWish({ item, user, num, coll }) {
+export async function upsertWish({ item, user, num, coll }) {
   const wish = await getWishByIds({
     itemId: item,
     userId: user,

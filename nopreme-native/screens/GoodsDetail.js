@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, Modal } from "react-native";
 import { graphql, createFragmentContainer } from "react-relay";
 
 import { createQueryRenderer } from "../relay";
@@ -14,8 +14,10 @@ import Tabs from "../components/Tabs";
 import WishIndicator from "../components/WishIndicator";
 import PosessionIndicator from "../components/PosessionIndicator";
 import ProgressBar from "../components/ProgressBar";
+import OptionModal from "../components/OptionModal";
 import ItemCard, { Padding } from "../containers/ItemCard";
 import AddCollectionMutation from "../relay/mutations/AddCollectionMutation";
+import UpdateCollectionMutation from "../relay/mutations/UpdateCollectionMutation";
 
 const styles = StyleSheet.create({
   container: {
@@ -33,29 +35,52 @@ const styles = StyleSheet.create({
   numItemsText: { fontSize: 16, fontWeight: "bold", color: "#333333" },
 });
 
+export const INTENTS = {
+  ADD: "ADD",
+  UPDATE: "UPDATE",
+};
+
 function GoodsDetail({ relay, navigation, route, viewer }) {
   const langCtx = useContext(LanguageContext);
   const [tabIdx, setTabIdx] = useState(0);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const { goods, items, collection } = viewer;
   const aspectRatio = goods.width / goods.height;
 
-  function pickItems() {
+  function buildParams(edges) {
+    return Object.fromEntries(
+      edges.map(({ node: { item: { itemId }, num } }) => [itemId, num])
+    );
+  }
+
+  function pickItems(intent) {
     navigation.navigate("ItemPicker", {
       screen: "PickWish",
       params: {
         goodsId: goods.goodsId,
+        wishes: buildParams(collection.wishes.edges),
+        posessions: buildParams(collection.posessions.edges),
+        intent,
       },
     });
   }
 
   useEffect(() => {
     if (route.params.wishes && route.params.posessions) {
-      AddCollectionMutation.commit(relay.environment, {
-        goodsId: goods.goodsId,
-        wishes: route.params.wishes,
-        posessions: route.params.posessions,
-      }).then();
+      if (route.params.intent === INTENTS.ADD) {
+        AddCollectionMutation.commit(relay.environment, {
+          goodsId: goods.goodsId,
+          wishes: route.params.wishes,
+          posessions: route.params.posessions,
+        }).then();
+      } else if (route.params.intent === INTENTS.UPDATE) {
+        UpdateCollectionMutation.commit(relay.environment, {
+          goodsId: goods.goodsId,
+          wishes: route.params.wishes,
+          posessions: route.params.posessions,
+        }).then();
+      }
     }
   }, []);
 
@@ -110,13 +135,32 @@ function GoodsDetail({ relay, navigation, route, viewer }) {
     }
   }
 
+  const options = [
+    {
+      title: langCtx.dictionary.reportIncorrect,
+      onSelect: () => console.log("report"),
+    },
+  ];
+
+  if (collection.collecting)
+    options.splice(0, 0, {
+      title: langCtx.dictionary.updateCollection,
+      onSelect: () => pickItems(INTENTS.UPDATE),
+    });
+
   return (
     <ImgBGScroll
       navigation={navigation}
       imgSrc={goods.img.src}
       headerTitle={goods.name}
-      onOptionPress={() => console.log("omOptionPress")}
+      onOptionPress={() => setModalVisible(true)}
     >
+      <OptionModal
+        visible={modalVisible}
+        onDismiss={() => setModalVisible(false)}
+        options={options}
+      />
+
       <Stack style={StyleSheet.compose(styles.container, { gap: 10 })}>
         <View style={{ flexDirection: "row" }}>
           <Badge text={getGoodsName(goods.type)} />
@@ -126,7 +170,9 @@ function GoodsDetail({ relay, navigation, route, viewer }) {
 
         {collection.collecting || (
           <View style={{ flexDirection: "row" }}>
-            <Button onPress={pickItems}>{langCtx.dictionary.collect}</Button>
+            <Button onPress={() => pickItems(INTENTS.ADD)}>
+              {langCtx.dictionary.collect}
+            </Button>
           </View>
         )}
         {collection.collecting || (
@@ -136,9 +182,9 @@ function GoodsDetail({ relay, navigation, route, viewer }) {
         {collection.collecting && (
           <Tabs
             tabTitles={[
-              `희망 ${wishCards.length}`,
-              `보유 ${posessionCards.length}`,
-              `전체 ${items.edges.length}`,
+              `${langCtx.dictionary.wish} ${wishCards.length}`,
+              `${langCtx.dictionary.posession} ${posessionCards.length}`,
+              `${langCtx.dictionary.total} ${items.edges.length}`,
             ]}
             tabIdx={tabIdx}
             onTabChange={setTabIdx}
