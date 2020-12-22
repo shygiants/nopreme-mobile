@@ -11,7 +11,7 @@ import { getEventName } from "../utils/enum";
 const styles = StyleSheet.create({
   scroll: { height: "100%" },
   container: { flexDirection: "column", width: "100%", padding: 16 },
-  eventText: { fontSize: 28 },
+  eventText: { fontSize: 28, fontWeight: "bold" },
 });
 
 function BrowseHome({ navigation, viewer }) {

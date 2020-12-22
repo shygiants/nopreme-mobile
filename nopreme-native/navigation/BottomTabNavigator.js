@@ -1,8 +1,9 @@
 import * as React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-// import TabBarIcon from "../components/TabBarIcon";
+import TabBarIcon from "../components/TabBarIcon";
 import BrowseTab from "./BrowseTab";
+import Profile from "../screens/Profile";
 
 const BottomTab = createBottomTabNavigator();
 
@@ -14,17 +15,30 @@ export default function BottomTabNavigator({ navigation, route }) {
   return (
     <BottomTab.Navigator
       initialRouteName="Browse"
-      //   tabBarOptions={{
-      //     activeTintColor: colors.primary,
-      //     showLabel: false,
-      //   }}
+      tabBarOptions={{
+        activeTintColor: "black",
+        inactiveTintColor: "#999999",
+        showLabel: false,
+      }}
     >
       <BottomTab.Screen
         name="Browse"
         component={BrowseTab}
-        // options={{
-        //   tabBarIcon: ({ color }) => <TabBarIcon color={color} name="md-search" />,
-        // }}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon style={{ color }} name="md-search" />
+          ),
+        }}
+      />
+
+      <BottomTab.Screen
+        name="Profile"
+        component={Profile}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon style={{ color }} name="md-person" />
+          ),
+        }}
       />
     </BottomTab.Navigator>
   );
