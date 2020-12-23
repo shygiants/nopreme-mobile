@@ -31,9 +31,10 @@ function BrowseHome({ navigation, relay, viewer }) {
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
-            onRefresh={() =>
-              relay.refetch(null, null, () => setRefreshing(false))
-            }
+            onRefresh={() => {
+              setRefreshing(true);
+              relay.refetch(null, null, () => setRefreshing(false));
+            }}
           />
         }
       >

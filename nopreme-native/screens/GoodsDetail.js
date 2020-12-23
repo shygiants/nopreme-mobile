@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-import { StyleSheet, Text, View, Modal } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { graphql, createFragmentContainer } from "react-relay";
 
 import { createQueryRenderer } from "../relay";
@@ -18,6 +18,8 @@ import OptionModal from "../components/OptionModal";
 import ItemCard, { Padding } from "../containers/ItemCard";
 import AddCollectionMutation from "../relay/mutations/AddCollectionMutation";
 import UpdateCollectionMutation from "../relay/mutations/UpdateCollectionMutation";
+
+import { CommonActions } from "@react-navigation/native";
 
 const styles = StyleSheet.create({
   container: {
@@ -66,6 +68,38 @@ function GoodsDetail({ relay, navigation, route, viewer }) {
     });
   }
 
+  function dispatchUpdateEvent() {
+    let parent = navigation;
+    let root;
+    do {
+      root = parent;
+      parent = parent.dangerouslyGetParent();
+    } while (parent !== undefined);
+
+    const inc = ["ProfileHome", "EventDetail"];
+
+    function getScreens(root) {
+      return root.routes
+        .map((route) => {
+          if (route.state) {
+            return getScreens(route.state);
+          } else {
+            return inc.includes(route.name) ? [route.key] : [];
+          }
+        })
+        .reduce((acc, curr) => acc.concat(curr), []);
+    }
+
+    const screens = getScreens(root.dangerouslyGetState());
+
+    screens.forEach((screen) =>
+      navigation.dispatch({
+        ...CommonActions.setParams({ update: true }),
+        source: screen,
+      })
+    );
+  }
+
   useEffect(() => {
     if (route.params.wishes && route.params.posessions) {
       if (route.params.intent === INTENTS.ADD) {
@@ -73,13 +107,13 @@ function GoodsDetail({ relay, navigation, route, viewer }) {
           goodsId: goods.goodsId,
           wishes: route.params.wishes,
           posessions: route.params.posessions,
-        }).then();
+        }).then(dispatchUpdateEvent);
       } else if (route.params.intent === INTENTS.UPDATE) {
         UpdateCollectionMutation.commit(relay.environment, {
           goodsId: goods.goodsId,
           wishes: route.params.wishes,
           posessions: route.params.posessions,
-        }).then();
+        }).then(dispatchUpdateEvent);
       }
     }
   }, []);

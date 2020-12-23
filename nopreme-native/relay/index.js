@@ -24,6 +24,7 @@ export function createQueryRenderer(
           if (!props) {
             return <Text>Processing...</Text>;
           }
+
           return <RootFragmentComponent route={route} {...rest} {...props} />;
         }}
       />

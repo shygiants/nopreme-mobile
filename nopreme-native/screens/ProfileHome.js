@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -39,11 +39,25 @@ function Profile({ name }) {
   );
 }
 
-function ProfileHome({ navigation, relay, viewer }) {
+function ProfileHome({ navigation, route, relay, viewer }) {
   const langCtx = useContext(LanguageContext);
   const [tabIdx, setTabIdx] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
   const { collections } = viewer;
+
+  function refresh(cb) {
+    setRefreshing(true);
+    relay.refetch(route.params, null, () => {
+      setRefreshing(false);
+      if (cb) cb();
+    });
+  }
+
+  useEffect(() => {
+    if (route.params && route.params.update) {
+      refresh(() => delete route.params.update);
+    }
+  }, [route.params]);
 
   function collToElem({
     node: {
@@ -90,12 +104,7 @@ function ProfileHome({ navigation, relay, viewer }) {
       <ScrollView
         style={styles.scroll}
         refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={() =>
-              relay.refetch(null, null, () => setRefreshing(false))
-            }
-          />
+          <RefreshControl refreshing={refreshing} onRefresh={refresh} />
         }
       >
         <Stack

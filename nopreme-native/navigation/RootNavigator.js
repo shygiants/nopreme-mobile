@@ -5,7 +5,6 @@ import {
 } from "@react-navigation/stack";
 
 import BottomTabNavigator from "./BottomTabNavigator";
-// import ItemPicker from "../screens/ItemPicker";
 import ItemPickerNavigator from "./ItemPickerNavigator";
 
 const Modal = createStackNavigator();
@@ -19,18 +18,6 @@ export default function RootNavigator({ navigation, route }) {
         component={ItemPickerNavigator}
         options={{
           ...TransitionPresets.ModalSlideFromBottomIOS,
-          //   headerShown: true,
-          //   headerBackTitleVisible: false,
-          //   headerLeftContainerStyle: {
-          //     paddingHorizontal: 8,
-          //   },
-          //   headerRightContainerStyle: {
-          //     paddingHorizontal: 8,
-          //   },
-          //   headerStyle: {
-          //     shadowOffset: { width: 0, height: 0 },
-          //   },
-          //   headerTintColor: "black",
           gestureEnabled: false,
         }}
       />

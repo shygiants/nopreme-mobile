@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { graphql, createRefetchContainer } from "react-relay";
 
@@ -32,6 +32,20 @@ function EventDetail({ navigation, route, relay, viewer }) {
   const [refreshing, setRefreshing] = useState(false);
   const { event, goodsCollection } = viewer;
 
+  function refresh(cb) {
+    setRefreshing(true);
+    relay.refetch(route.params, null, () => {
+      setRefreshing(false);
+      if (cb) cb();
+    });
+  }
+
+  useEffect(() => {
+    if (route.params && route.params.update) {
+      refresh(() => delete route.params.update);
+    }
+  }, [route.params]);
+
   return (
     <ImgBGScroll
       navigation={navigation}
@@ -39,9 +53,7 @@ function EventDetail({ navigation, route, relay, viewer }) {
       headerTitle={event.name}
       onOptionPress={() => setModalVisible(true)}
       refreshing={refreshing}
-      onRefresh={() =>
-        relay.refetch(route.params, null, () => setRefreshing(false))
-      }
+      onRefresh={refresh}
     >
       <OptionModal
         visible={modalVisible}
