@@ -23,10 +23,13 @@ export default {
   artist: {
     type: new GraphQLNonNull(new GraphQLList(GraphQLArtist)),
     resolve: async (item) =>
-      item.artist.map((artist) => await getArtistById({ _id: artist })),
+      await Promise.all(
+        item.artist.map((artist) => getArtistById({ _id: artist }))
+      ),
   },
   img: {
     type: GraphQLImage,
-    resolve: async (item) => (item.img ? await getImageById({ _id: item.img }) : null),
+    resolve: async (item) =>
+      item.img ? await getImageById({ _id: item.img }) : null,
   },
 };

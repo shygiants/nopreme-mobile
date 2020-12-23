@@ -4,6 +4,7 @@ import { GraphQLID, GraphQLInt, GraphQLNonNull, GraphQLString } from "graphql";
 import { GraphQLImage, GraphQLEvent } from ".";
 import { getImageById } from "../../db-schema/Image";
 import { getEventById } from "../../db-schema/Event";
+import { getItems } from "../../db-schema/Item";
 
 export default {
   id: globalIdField("Goods", (goods) => goods._id),
@@ -34,5 +35,9 @@ export default {
     type: GraphQLEvent,
     resolve: async (goods) =>
       goods.event ? await getEventById({ _id: goods.event }) : null,
+  },
+  numItems: {
+    type: GraphQLInt,
+    resolve: async (goods) => (await getItems({ goodsId: goods._id })).length,
   },
 };

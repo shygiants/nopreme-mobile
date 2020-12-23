@@ -1,9 +1,11 @@
 import { globalIdField } from "graphql-relay";
-import { GraphQLID, GraphQLNonNull, GraphQLString } from "graphql";
+import { GraphQLID, GraphQLNonNull, GraphQLString, GraphQLInt } from "graphql";
 
 import { dateToStr } from "../../utils/date";
 import { GraphQLImage } from ".";
 import { getImageById } from "../../db-schema/Image";
+import { getGoodsCollection } from "../../db-schema/Goods";
+import { getArtistByName } from "../../db-schema/Artist";
 
 export default {
   id: globalIdField("Event", (event) => event._id),
@@ -25,5 +27,19 @@ export default {
   },
   type: {
     type: new GraphQLNonNull(GraphQLString),
+  },
+  numGoods: {
+    type: GraphQLInt,
+    args: {
+      artistName: {
+        type: new GraphQLNonNull(GraphQLString),
+      },
+    },
+    resolve: async (event, { artistName }) => {
+      const artist = await getArtistByName({ name: artistName });
+      return (
+        await getGoodsCollection({ artistId: artist._id, eventId: event._id })
+      ).length;
+    },
   },
 };

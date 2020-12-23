@@ -35,6 +35,7 @@ function BrowseHome({ navigation, viewer }) {
                     name,
                     img: { src },
                     type,
+                    numGoods,
                   },
                 }) => (
                   <EventCard
@@ -42,6 +43,7 @@ function BrowseHome({ navigation, viewer }) {
                     img={src}
                     title={name}
                     type={getEventName(type)}
+                    numGoods={numGoods}
                     onPress={() =>
                       navigation.push("EventDetail", {
                         eventId,
@@ -83,6 +85,7 @@ const FragmentContainer = createFragmentContainer(BrowseHome, {
               imageId
               src
             }
+            numGoods(artistName: "IZ*ONE")
           }
         }
       }

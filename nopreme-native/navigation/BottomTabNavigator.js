@@ -3,7 +3,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import TabBarIcon from "../components/TabBarIcon";
 import BrowseTab from "./BrowseTab";
-import Profile from "../screens/Profile";
+import ProfileTab from "./ProfileTab";
 
 const BottomTab = createBottomTabNavigator();
 
@@ -33,7 +33,7 @@ export default function BottomTabNavigator({ navigation, route }) {
 
       <BottomTab.Screen
         name="Profile"
-        component={Profile}
+        component={ProfileTab}
         options={{
           tabBarIcon: ({ color }) => (
             <TabBarIcon style={{ color }} name="md-person" />

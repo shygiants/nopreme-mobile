@@ -18,7 +18,8 @@ type Viewer implements Node {
   goodsCollection(artistName: String!, eventId: ID!, after: String, first: Int, before: String, last: Int): GoodsConnection!
   goods(goodsId: ID!): Goods!
   items(goodsId: ID!, after: String, first: Int, before: String, last: Int): ItemConnection!
-  collection(goodsId: ID!): Collection
+  collection(goodsId: ID!): Collection!
+  collections(after: String, first: Int, before: String, last: Int): CollectionConnection!
 }
 
 """An object with an ID"""
@@ -75,6 +76,7 @@ type Event implements Node {
   name: String!
   date: String!
   type: String!
+  numGoods(artistName: String!): Int
 }
 
 type Image implements Node {
@@ -112,6 +114,7 @@ type Goods implements Node {
   width: Int
   height: Int
   event: Event
+  numItems: Int
 }
 
 """A connection to a list of items."""
@@ -212,6 +215,24 @@ type Posession implements Node {
   user: User!
   num: Int!
   wished: Int!
+}
+
+"""A connection to a list of items."""
+type CollectionConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [CollectionEdge]
+}
+
+"""An edge in a connection."""
+type CollectionEdge {
+  """The item at the end of the edge"""
+  node: Collection
+
+  """A cursor for use in pagination"""
+  cursor: String!
 }
 
 type Admin implements Node {
@@ -452,15 +473,6 @@ input RemoveItemInput {
 type AddCollectionPayload {
   collectionEdge: CollectionEdge!
   clientMutationId: String
-}
-
-"""An edge in a connection."""
-type CollectionEdge {
-  """The item at the end of the edge"""
-  node: Collection
-
-  """A cursor for use in pagination"""
-  cursor: String!
 }
 
 input AddCollectionInput {

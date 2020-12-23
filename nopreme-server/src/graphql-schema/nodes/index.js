@@ -31,22 +31,19 @@ import {
 import { getGoodsById, Goods, getGoodsCollection } from "../../db-schema/Goods";
 import { getItemById, Item, getItems } from "../../db-schema/Item";
 import {
-  getCollectionById,
   Collection,
   getCollectionByIds,
+  getCollections,
 } from "../../db-schema/Collection";
-import { getWishById, Wish, getWishObj } from "../../db-schema/Wish";
-import {
-  getPosessionById,
-  Posession,
-  getPosessionObj,
-} from "../../db-schema/Posession";
+import { Wish, getWishObj } from "../../db-schema/Wish";
+import { Posession, getPosessionObj } from "../../db-schema/Posession";
 
 const SEPARATOR = "-";
 
 export const { nodeInterface, nodeField } = nodeDefinitions(
   async (globalId) => {
     const { type, id } = fromGlobalId(globalId);
+    let goodsId, userId;
 
     switch (type) {
       case "User":
@@ -62,16 +59,16 @@ export const { nodeInterface, nodeField } = nodeDefinitions(
       case "Item":
         return await getItemById({ _id: id });
       case "Collection":
-        const [goodsId, userId] = id.split(SEPARATOR);
+        [goodsId, userId] = id.split(SEPARATOR);
         const collection = await getCollectionByIds({ goodsId, userId });
         return collection === null || !collection.intent
           ? { goods: goodsId, user: userId }
           : collection;
       case "Wish":
-        const [itemId, userId] = id.split(SEPARATOR);
+        [itemId, userId] = id.split(SEPARATOR);
         return await getWishObj({ itemId, userId });
       case "Posession":
-        const [itemId, userId] = id.split(SEPARATOR);
+        [itemId, userId] = id.split(SEPARATOR);
         return await getPosessionObj({ itemId, userId });
       case "Admin":
         return new Admin();
@@ -433,7 +430,7 @@ export const GraphQLViewer = new GraphQLObjectType({
       },
     },
     collection: {
-      type: GraphQLCollection,
+      type: new GraphQLNonNull(GraphQLCollection),
       args: {
         goodsId: {
           type: new GraphQLNonNull(GraphQLID),
@@ -445,6 +442,24 @@ export const GraphQLViewer = new GraphQLObjectType({
         return collection && collection.intent
           ? collection
           : { goods: goodsId, user: id };
+      },
+    },
+    collections: {
+      type: new GraphQLNonNull(CollectionConnection),
+      args: connectionArgs,
+      resolve: async (
+        root,
+        { after, before, first, last },
+        { user: { id } }
+      ) => {
+        const collections = await getCollections({ userId: id });
+
+        return connectionFromArray([...collections], {
+          after,
+          before,
+          first,
+          last,
+        });
       },
     },
   },

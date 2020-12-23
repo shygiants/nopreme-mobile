@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
+const ObjectId = mongoose.Types.ObjectId;
 
 const collectionSchema = new mongoose.Schema({
   goods: {
@@ -48,4 +49,23 @@ export async function addCollection({ goods, user }) {
   return intent
     ? await new Collection({ goods, user, intent: true }).save()
     : null;
+}
+
+export async function getCollections({ userId }) {
+  return await Collection.aggregate()
+    .match({ user: new ObjectId(userId) })
+    .sort({ createdAt: -1 })
+    .group({
+      _id: "$goods",
+      collection: { $first: "$_id" },
+      intent: { $first: "$intent" },
+      user: { $first: "$user" },
+    })
+    .match({ intent: true })
+    .project({
+      _id: "$collection",
+      goods: "$_id",
+      user: 1,
+    })
+    .exec();
 }

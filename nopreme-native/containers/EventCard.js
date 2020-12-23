@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
   subText: { fontSize: 12, fontWeight: "bold", color: "#555555" },
 });
 
-export default function EventCard({ title, type, img, onPress }) {
+export default function EventCard({ title, type, img, numGoods, onPress }) {
   const langCtx = useContext(LanguageContext);
   return (
     <TouchableOpacity onPress={onPress}>
@@ -25,7 +25,9 @@ export default function EventCard({ title, type, img, onPress }) {
             <Badge text={type} />
           </View>
           <Text style={styles.titleText}>{title}</Text>
-          <Text style={styles.subText}>{langCtx.dictionary.goods} 2</Text>
+          <Text style={styles.subText}>
+            {`${langCtx.dictionary.goods} ${numGoods}`}
+          </Text>
         </Stack>
       </Stack>
     </TouchableOpacity>

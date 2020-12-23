@@ -176,7 +176,9 @@ function GoodsDetail({ relay, navigation, route, viewer }) {
           </View>
         )}
         {collection.collecting || (
-          <Text style={styles.numItemsText}>{`${items.edges.length} 종`}</Text>
+          <Text
+            style={styles.numItemsText}
+          >{`${items.edges.length} ${langCtx.dictionary.ea}`}</Text>
         )}
 
         {collection.collecting && (
