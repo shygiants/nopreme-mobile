@@ -32,7 +32,7 @@ function Profile({ name }) {
   );
 }
 
-function ProfileHome({ viewer }) {
+function ProfileHome({ navigation, viewer }) {
   const langCtx = useContext(LanguageContext);
   const [tabIdx, setTabIdx] = useState(0);
   const { collections } = viewer;
@@ -50,7 +50,11 @@ function ProfileHome({ viewer }) {
         type={getGoodsName(type)}
         numItems={numItems}
         fulfilled={fulfilled}
-        onPress={() => console.log("goods pressed")}
+        onPress={() =>
+          navigation.push("GoodsDetail", {
+            goodsId,
+          })
+        }
       />
     );
   }
