@@ -13,6 +13,7 @@ import { createQueryRenderer } from "../relay";
 import { LanguageContext } from "../contexts/LanguageContext";
 import Stack from "../components/Stack";
 import Tabs from "../components/Tabs";
+import HeaderButton from "../components/HeaderButton";
 import GoodsListItem from "../containers/GoodsListItem";
 import { getGoodsName } from "../utils/enum";
 
@@ -52,6 +53,18 @@ function ProfileHome({ navigation, route, relay, viewer }) {
       if (cb) cb();
     });
   }
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: ({ tintColor }) => (
+        <HeaderButton
+          name="md-settings-outline"
+          style={{ color: tintColor }}
+          onPress={() => navigation.push("Settings")}
+        />
+      ),
+    });
+  }, []);
 
   useEffect(() => {
     if (route.params && route.params.update) {

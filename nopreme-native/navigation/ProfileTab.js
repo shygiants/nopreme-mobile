@@ -3,6 +3,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 
 import ProfileHome from "../screens/ProfileHome";
 import GoodsDetail from "../screens/GoodsDetail";
+import Settings from "../screens/Settings";
 
 const Stack = createStackNavigator();
 
@@ -12,7 +13,24 @@ export default function ProfileTab() {
       <Stack.Screen
         name="ProfileHome"
         component={ProfileHome}
-        options={{ headerShown: false }}
+        options={{
+          headerTitle: "마이 페이지",
+          headerRightContainerStyle: {
+            paddingHorizontal: 8,
+          },
+        }}
+      />
+      <Stack.Screen
+        name="Settings"
+        component={Settings}
+        options={{
+          headerTitle: "설정",
+          headerTintColor: "black",
+          headerBackTitleVisible: false,
+          headerRightContainerStyle: {
+            paddingHorizontal: 8,
+          },
+        }}
       />
       <Stack.Screen
         name="GoodsDetail"

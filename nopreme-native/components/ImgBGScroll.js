@@ -81,7 +81,7 @@ export default function ImgBGScroll({
   function setHeaderSolid() {
     setImgShown(false);
     navigation.setOptions({
-      headerTintColor: "#000000",
+      headerTintColor: "black",
       headerTitle,
       headerBackground: () => (
         <View
