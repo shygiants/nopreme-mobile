@@ -1,6 +1,13 @@
 import React, { useContext, useState } from "react";
-import { View, Text, SafeAreaView, ScrollView, StyleSheet } from "react-native";
-import { graphql, createFragmentContainer } from "react-relay";
+import {
+  View,
+  Text,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  RefreshControl,
+} from "react-native";
+import { graphql, createRefetchContainer } from "react-relay";
 
 import { createQueryRenderer } from "../relay";
 import { LanguageContext } from "../contexts/LanguageContext";
@@ -32,9 +39,10 @@ function Profile({ name }) {
   );
 }
 
-function ProfileHome({ navigation, viewer }) {
+function ProfileHome({ navigation, relay, viewer }) {
   const langCtx = useContext(LanguageContext);
   const [tabIdx, setTabIdx] = useState(0);
+  const [refreshing, setRefreshing] = useState(false);
   const { collections } = viewer;
 
   function collToElem({
@@ -49,6 +57,7 @@ function ProfileHome({ navigation, viewer }) {
         title={name}
         img={img.src}
         type={getGoodsName(type)}
+        collecting
         numItems={numItems}
         fulfilled={fulfilled}
         onPress={() =>
@@ -77,8 +86,18 @@ function ProfileHome({ navigation, viewer }) {
   }
 
   return (
-    <SafeAreaView>
-      <ScrollView style={styles.scroll}>
+    <SafeAreaView style={{ backgroundColor: "white" }}>
+      <ScrollView
+        style={styles.scroll}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() =>
+              relay.refetch(null, null, () => setRefreshing(false))
+            }
+          />
+        }
+      >
         <Stack
           style={{
             gap: 10,
@@ -94,47 +113,57 @@ function ProfileHome({ navigation, viewer }) {
             tabIdx={tabIdx}
             onTabChange={setTabIdx}
           />
-          {getTabContent()}
+          <Stack style={{ gap: 10 }}>{getTabContent()}</Stack>
         </Stack>
       </ScrollView>
     </SafeAreaView>
   );
 }
 
-const FragmentContainer = createFragmentContainer(ProfileHome, {
-  viewer: graphql`
-    fragment ProfileHome_viewer on Viewer {
-      id
-      viewer {
+const FragmentContainer = createRefetchContainer(
+  ProfileHome,
+  {
+    viewer: graphql`
+      fragment ProfileHome_viewer on Viewer {
         id
-        userId
-        name
-      }
-      collections(
-        first: 2147483647 # max GraphQLInt
-      ) @connection(key: "ProfileHome_collections") {
-        edges {
-          node {
-            id
-            collecting
-            fulfilled
-            goods {
+        viewer {
+          id
+          userId
+          name
+        }
+        collections(
+          first: 2147483647 # max GraphQLInt
+        ) @connection(key: "ProfileHome_collections") {
+          edges {
+            node {
               id
-              goodsId
-              name
-              img {
+              collecting
+              fulfilled
+              goods {
                 id
-                src
+                goodsId
+                name
+                img {
+                  id
+                  src
+                }
+                type
+                numItems
               }
-              type
-              numItems
             }
           }
         }
       }
+    `,
+  },
+  graphql`
+    query ProfileHomeQuery {
+      viewer {
+        ...ProfileHome_viewer
+      }
     }
-  `,
-});
+  `
+);
 
 export default createQueryRenderer(
   FragmentContainer,

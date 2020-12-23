@@ -22,6 +22,7 @@ const __DEV__ = false;
 
 const store = new Store(new RecordSource());
 
+// TODO: Cache, batch
 const network = new RelayNetworkLayer([
   urlMiddleware({
     url: () => {

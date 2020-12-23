@@ -4,6 +4,7 @@ import {
   View,
   ScrollView,
   useWindowDimensions,
+  RefreshControl,
 } from "react-native";
 import { useHeaderHeight } from "@react-navigation/stack";
 import { StatusBar } from "expo-status-bar";
@@ -42,6 +43,8 @@ export default function ImgBGScroll({
   headerTitle,
   children,
   onOptionPress,
+  refreshing,
+  onRefresh,
 }) {
   const [imgShown, setImgShown] = useState(true);
   const [aspectRatio, setAspectRatio] = useState(1);
@@ -108,6 +111,9 @@ export default function ImgBGScroll({
         style={styles.scroll}
         scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl onRefresh={onRefresh} refreshing={refreshing} />
+        }
         onScroll={({
           nativeEvent: {
             contentOffset: { y },

@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { graphql, createFragmentContainer } from "react-relay";
+import { graphql, createRefetchContainer } from "react-relay";
 
 import { createQueryRenderer } from "../relay";
 import { LanguageContext } from "../contexts/LanguageContext";
@@ -26,12 +26,11 @@ const styles = StyleSheet.create({
   },
 });
 
-function EventDetail({ navigation, route, viewer }) {
+function EventDetail({ navigation, route, relay, viewer }) {
   const langCtx = useContext(LanguageContext);
   const [modalVisible, setModalVisible] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const { event, goodsCollection } = viewer;
-
-  console.log(goodsCollection);
 
   return (
     <ImgBGScroll
@@ -39,6 +38,10 @@ function EventDetail({ navigation, route, viewer }) {
       imgSrc={event.img.src}
       headerTitle={event.name}
       onOptionPress={() => setModalVisible(true)}
+      refreshing={refreshing}
+      onRefresh={() =>
+        relay.refetch(route.params, null, () => setRefreshing(false))
+      }
     >
       <OptionModal
         visible={modalVisible}
@@ -91,57 +94,67 @@ function EventDetail({ navigation, route, viewer }) {
   );
 }
 
-const FragmentContainer = createFragmentContainer(EventDetail, {
-  viewer: graphql`
-    fragment EventDetail_viewer on Viewer
-    @argumentDefinitions(eventId: { type: "ID!" }) {
-      id
-      viewer {
+const FragmentContainer = createRefetchContainer(
+  EventDetail,
+  {
+    viewer: graphql`
+      fragment EventDetail_viewer on Viewer
+      @argumentDefinitions(eventId: { type: "ID!" }) {
         id
-        userId
-        name
-      }
-      event(eventId: $eventId) {
-        id
-        eventId
-        name
-        date
-        type
-        img {
+        viewer {
           id
-          imageId
-          src
+          userId
+          name
         }
-      }
-      goodsCollection(
-        artistName: "IZ*ONE"
-        eventId: $eventId
-        first: 2147483647 # max GraphQLInt
-      )
-        @connection(
-          key: "EventDetail_goodsCollection"
-          filters: ["artistName", "eventId"]
-        ) {
-        edges {
-          node {
+        event(eventId: $eventId) {
+          id
+          eventId
+          name
+          date
+          type
+          img {
             id
-            goodsId
-            name
-            type
-            img {
+            imageId
+            src
+          }
+        }
+        goodsCollection(
+          artistName: "IZ*ONE"
+          eventId: $eventId
+          first: 2147483647 # max GraphQLInt
+        )
+          @connection(
+            key: "EventDetail_goodsCollection"
+            filters: ["artistName", "eventId"]
+          ) {
+          edges {
+            node {
               id
-              imageId
-              src
+              goodsId
+              name
+              type
+              img {
+                id
+                imageId
+                src
+              }
+              numItems
+              collecting
+              fulfilled
             }
-            numItems
-            collecting
-            fulfilled
           }
         }
       }
+    `,
+  },
+  graphql`
+    query EventDetailQuery($eventId: ID!) {
+      viewer {
+        ...EventDetail_viewer @arguments(eventId: $eventId)
+      }
     }
-  `,
-});
+  `
+);
 
 export default createQueryRenderer(
   FragmentContainer,

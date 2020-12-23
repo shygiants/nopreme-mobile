@@ -1,6 +1,12 @@
-import React, { useContext } from "react";
-import { StyleSheet, Text, ScrollView, SafeAreaView } from "react-native";
-import { graphql, createFragmentContainer } from "react-relay";
+import React, { useContext, useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  ScrollView,
+  SafeAreaView,
+  RefreshControl,
+} from "react-native";
+import { graphql, createRefetchContainer } from "react-relay";
 
 import { createQueryRenderer } from "../relay";
 import { LanguageContext } from "../contexts/LanguageContext";
@@ -14,12 +20,23 @@ const styles = StyleSheet.create({
   eventText: { fontSize: 28, fontWeight: "bold" },
 });
 
-function BrowseHome({ navigation, viewer }) {
+function BrowseHome({ navigation, relay, viewer }) {
   const langCtx = useContext(LanguageContext);
+  const [refreshing, setRefreshing] = useState(false);
 
   return (
-    <SafeAreaView>
-      <ScrollView style={styles.scroll}>
+    <SafeAreaView style={{ backgroundColor: "white" }}>
+      <ScrollView
+        style={styles.scroll}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() =>
+              relay.refetch(null, null, () => setRefreshing(false))
+            }
+          />
+        }
+      >
         <Stack style={StyleSheet.compose(styles.container, { gap: 16 })}>
           <Text style={styles.eventText}>{langCtx.dictionary.event}</Text>
           <ScrollView
@@ -60,38 +77,48 @@ function BrowseHome({ navigation, viewer }) {
   );
 }
 
-const FragmentContainer = createFragmentContainer(BrowseHome, {
-  viewer: graphql`
-    fragment BrowseHome_viewer on Viewer {
-      id
-      viewer {
+const FragmentContainer = createRefetchContainer(
+  BrowseHome,
+  {
+    viewer: graphql`
+      fragment BrowseHome_viewer on Viewer {
         id
-        userId
-        name
-      }
-      events(
-        artistName: "IZ*ONE"
-        first: 2147483647 # max GraphQLInt
-      ) @connection(key: "BrowseHome_events", filters: ["artistName"]) {
-        edges {
-          node {
-            id
-            eventId
-            name
-            date
-            type
-            img {
+        viewer {
+          id
+          userId
+          name
+        }
+        events(
+          artistName: "IZ*ONE"
+          first: 2147483647 # max GraphQLInt
+        ) @connection(key: "BrowseHome_events", filters: ["artistName"]) {
+          edges {
+            node {
               id
-              imageId
-              src
+              eventId
+              name
+              date
+              type
+              img {
+                id
+                imageId
+                src
+              }
+              numGoods(artistName: "IZ*ONE")
             }
-            numGoods(artistName: "IZ*ONE")
           }
         }
       }
+    `,
+  },
+  graphql`
+    query BrowseHomeQuery {
+      viewer {
+        ...BrowseHome_viewer
+      }
     }
-  `,
-});
+  `
+);
 
 export default createQueryRenderer(
   FragmentContainer,
