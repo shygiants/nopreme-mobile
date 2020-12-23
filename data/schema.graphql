@@ -115,6 +115,8 @@ type Goods implements Node {
   height: Int
   event: Event
   numItems: Int
+  collecting: Boolean
+  fulfilled: Float
 }
 
 """A connection to a list of items."""

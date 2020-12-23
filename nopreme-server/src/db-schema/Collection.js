@@ -2,6 +2,10 @@ import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 const ObjectId = mongoose.Types.ObjectId;
 
+import { getWishByIds } from "./Wish";
+import { getItems } from "./Item";
+import { getPosessionNumByIds } from "./Posession";
+
 const collectionSchema = new mongoose.Schema({
   goods: {
     type: Schema.Types.ObjectId,
@@ -51,7 +55,12 @@ export async function addCollection({ goods, user }) {
     : null;
 }
 
-export async function getCollections({ userId }) {
+export async function getCollections(
+  { userId },
+  sort = { sortBy: "", order: 1 }
+) {
+  // TODO: Sort by various criterion
+
   return await Collection.aggregate()
     .match({ user: new ObjectId(userId) })
     .sort({ createdAt: -1 })
@@ -68,4 +77,53 @@ export async function getCollections({ userId }) {
       user: 1,
     })
     .exec();
+}
+
+export async function isCollecting({ goodsId, userId }) {
+  const collection = await getCollectionByIds({ goodsId, userId });
+
+  return collection !== null && collection.intent;
+}
+
+export async function getFulfilled({ goodsId, userId }) {
+  const collection = await getCollectionByIds({ goodsId, userId });
+
+  if (collection === null || !collection.intent) return 0;
+
+  const items = await getItems({ goodsId });
+
+  const wishes = await Promise.all(
+    items.map(
+      async ({ _id }) =>
+        await getWishByIds({
+          itemId: _id,
+          userId,
+          collectionId: collection._id,
+        })
+    )
+  );
+
+  const status = await Promise.all(
+    wishes
+      .filter((wish) => wish !== null && wish.num > 0)
+      .map(async ({ item, num }) => {
+        const fulfilled = await getPosessionNumByIds({
+          itemId: item,
+          userId,
+          collectionId: collection._id,
+        });
+
+        return { num, fulfilled };
+      })
+  );
+
+  const reduced = status.reduce(
+    (accum, { num, fulfilled }) => ({
+      num: accum.num + num,
+      fulfilled: accum.fulfilled + Math.min(fulfilled, num),
+    }),
+    { num: 0, fulfilled: 0 }
+  );
+
+  return reduced.fulfilled / reduced.num;
 }

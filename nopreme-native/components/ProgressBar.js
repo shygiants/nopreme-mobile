@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function ProgressBar({ progress }) {
+export default function ProgressBar({ progress, textStyle }) {
   const langCtx = useContext(LanguageContext);
   const percentage = `${(progress * 100).toFixed(0)}%`;
   return (
@@ -35,7 +35,7 @@ export default function ProgressBar({ progress }) {
         })}
       />
       <Text
-        style={styles.progressText}
+        style={StyleSheet.compose(styles.progressText, textStyle)}
       >{`${percentage} ${langCtx.dictionary.achieved}`}</Text>
     </View>
   );

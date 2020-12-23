@@ -1,10 +1,18 @@
 import { globalIdField } from "graphql-relay";
-import { GraphQLID, GraphQLInt, GraphQLNonNull, GraphQLString } from "graphql";
+import {
+  GraphQLBoolean,
+  GraphQLFloat,
+  GraphQLID,
+  GraphQLInt,
+  GraphQLNonNull,
+  GraphQLString,
+} from "graphql";
 
 import { GraphQLImage, GraphQLEvent } from ".";
 import { getImageById } from "../../db-schema/Image";
 import { getEventById } from "../../db-schema/Event";
 import { getItems } from "../../db-schema/Item";
+import { getFulfilled, isCollecting } from "../../db-schema/Collection";
 
 export default {
   id: globalIdField("Goods", (goods) => goods._id),
@@ -39,5 +47,16 @@ export default {
   numItems: {
     type: GraphQLInt,
     resolve: async (goods) => (await getItems({ goodsId: goods._id })).length,
+  },
+  collecting: {
+    type: GraphQLBoolean,
+    resolve: async (goods, args, { user: { id } }) =>
+      await isCollecting({ goodsId: goods._id, userId: id }),
+  },
+  fulfilled: {
+    type: GraphQLFloat,
+    resolve: async (goods, args, { user: { id } }) => {
+      return await getFulfilled({ goodsId: goods._id, userId: id });
+    },
   },
 };

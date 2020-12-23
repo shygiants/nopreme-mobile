@@ -63,6 +63,8 @@ function EventDetail({ navigation, route, viewer }) {
                 type,
                 img: { src },
                 numItems,
+                collecting,
+                fulfilled,
               },
             }) => (
               <GoodsListItem
@@ -71,6 +73,7 @@ function EventDetail({ navigation, route, viewer }) {
                 type={getGoodsName(type)}
                 img={src}
                 numItems={numItems}
+                fulfilled={collecting && fulfilled}
                 onPress={() =>
                   navigation.push("GoodsDetail", {
                     goodsId,
@@ -128,6 +131,8 @@ const FragmentContainer = createFragmentContainer(EventDetail, {
               src
             }
             numItems
+            collecting
+            fulfilled
           }
         }
       }

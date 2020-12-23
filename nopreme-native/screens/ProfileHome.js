@@ -36,6 +36,53 @@ function ProfileHome({ viewer }) {
   const langCtx = useContext(LanguageContext);
   const [tabIdx, setTabIdx] = useState(0);
   const { collections } = viewer;
+
+  function collToElem({
+    node: {
+      goods: { goodsId, name, img, type, numItems, fulfilled },
+    },
+  }) {
+    return (
+      <GoodsListItem
+        key={goodsId}
+        title={name}
+        img={img.src}
+        type={getGoodsName(type)}
+        numItems={numItems}
+        fulfilled={fulfilled}
+        onPress={() => console.log("goods pressed")}
+      />
+    );
+  }
+
+  const collectingGoods = collections.edges
+    .filter(
+      ({
+        node: {
+          goods: { fulfilled },
+        },
+      }) => fulfilled < 1
+    )
+    .map(collToElem);
+  const collectedGoods = collections.edges
+    .filter(
+      ({
+        node: {
+          goods: { fulfilled },
+        },
+      }) => fulfilled === 1
+    )
+    .map(collToElem);
+
+  function getTabContent() {
+    switch (tabIdx) {
+      case 0:
+        return collectingGoods;
+      case 1:
+        return collectedGoods;
+    }
+  }
+
   return (
     <SafeAreaView>
       <ScrollView style={styles.scroll}>
@@ -48,28 +95,13 @@ function ProfileHome({ viewer }) {
           <Profile name={viewer.viewer.name} />
           <Tabs
             tabTitles={[
-              `${langCtx.dictionary.collecting} ${collections.edges.length}`,
-              `${langCtx.dictionary.collected} ${0}`,
+              `${langCtx.dictionary.collecting} ${collectingGoods.length}`,
+              `${langCtx.dictionary.collected} ${collectedGoods.length}`,
             ]}
             tabIdx={tabIdx}
             onTabChange={setTabIdx}
           />
-          {collections.edges.map(
-            ({
-              node: {
-                goods: { goodsId, name, img, type, numItems },
-              },
-            }) => (
-              <GoodsListItem
-                key={goodsId}
-                title={name}
-                img={img.src}
-                type={getGoodsName(type)}
-                numItems={numItems}
-                onPress={() => console.log("goods pressed")}
-              />
-            )
-          )}
+          {getTabContent()}
         </Stack>
       </ScrollView>
     </SafeAreaView>
@@ -102,6 +134,7 @@ const FragmentContainer = createFragmentContainer(ProfileHome, {
               }
               type
               numItems
+              fulfilled
             }
           }
         }
