@@ -29,6 +29,7 @@ export default function GoodsListItem({
   type,
   img,
   numItems,
+  collecting,
   fulfilled,
   onPress,
 }) {
@@ -47,7 +48,7 @@ export default function GoodsListItem({
             <Badge text={type} />
           </View>
           <Text style={styles.titleText}>{title}</Text>
-          {fulfilled && (
+          {collecting && (
             <ProgressBar
               textStyle={{
                 fontSize: 12,

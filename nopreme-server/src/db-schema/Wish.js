@@ -54,7 +54,8 @@ export async function upsertWish({ item, user, num, coll }) {
     userId: user,
     collectionId: coll,
   });
-  if ((wish === null && num !== 0) || wish.num !== num)
+
+  if ((wish === null && num !== 0) || (wish !== null && wish.num !== num))
     return await new Wish({ item, user, num, coll }).save();
 
   return wish;

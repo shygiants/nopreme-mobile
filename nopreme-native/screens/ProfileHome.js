@@ -39,7 +39,8 @@ function ProfileHome({ navigation, viewer }) {
 
   function collToElem({
     node: {
-      goods: { goodsId, name, img, type, numItems, fulfilled },
+      fulfilled,
+      goods: { goodsId, name, img, type, numItems },
     },
   }) {
     return (
@@ -60,22 +61,10 @@ function ProfileHome({ navigation, viewer }) {
   }
 
   const collectingGoods = collections.edges
-    .filter(
-      ({
-        node: {
-          goods: { fulfilled },
-        },
-      }) => fulfilled < 1
-    )
+    .filter(({ node: { fulfilled } }) => fulfilled < 1)
     .map(collToElem);
   const collectedGoods = collections.edges
-    .filter(
-      ({
-        node: {
-          goods: { fulfilled },
-        },
-      }) => fulfilled === 1
-    )
+    .filter(({ node: { fulfilled } }) => fulfilled === 1)
     .map(collToElem);
 
   function getTabContent() {
@@ -128,6 +117,7 @@ const FragmentContainer = createFragmentContainer(ProfileHome, {
           node {
             id
             collecting
+            fulfilled
             goods {
               id
               goodsId
@@ -138,7 +128,6 @@ const FragmentContainer = createFragmentContainer(ProfileHome, {
               }
               type
               numItems
-              fulfilled
             }
           }
         }

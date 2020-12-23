@@ -1,5 +1,5 @@
 import { globalIdField } from "graphql-relay";
-import { GraphQLBoolean, GraphQLNonNull } from "graphql";
+import { GraphQLBoolean, GraphQLNonNull, GraphQLFloat } from "graphql";
 import { connectionArgs, connectionFromArray } from "graphql-relay";
 
 import {
@@ -13,6 +13,7 @@ import { getUserById } from "../../db-schema/User";
 import { getWishesByCollectionId } from "../../db-schema/Wish";
 import { getPosessionsByCollectionId } from "../../db-schema/Posession";
 import { getItems } from "../../db-schema/Item";
+import { getFulfilled } from "../../db-schema/Collection";
 
 const SEPARATOR = "-";
 
@@ -24,6 +25,12 @@ export default {
     type: new GraphQLNonNull(GraphQLBoolean),
     resolve: (collection) =>
       collection._id !== undefined && collection._id !== null,
+  },
+  fulfilled: {
+    type: GraphQLFloat,
+    resolve: async (collection, args, { user: { id } }) => {
+      return await getFulfilled({ goodsId: collection.goods, userId: id });
+    },
   },
   goods: {
     type: new GraphQLNonNull(GraphQLGoods),

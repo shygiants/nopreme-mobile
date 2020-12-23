@@ -31,6 +31,8 @@ function EventDetail({ navigation, route, viewer }) {
   const [modalVisible, setModalVisible] = useState(false);
   const { event, goodsCollection } = viewer;
 
+  console.log(goodsCollection);
+
   return (
     <ImgBGScroll
       navigation={navigation}
@@ -73,7 +75,8 @@ function EventDetail({ navigation, route, viewer }) {
                 type={getGoodsName(type)}
                 img={src}
                 numItems={numItems}
-                fulfilled={collecting && fulfilled}
+                collecting={collecting}
+                fulfilled={fulfilled}
                 onPress={() =>
                   navigation.push("GoodsDetail", {
                     goodsId,

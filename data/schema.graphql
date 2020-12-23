@@ -159,6 +159,7 @@ type Collection implements Node {
   """The ID of an object"""
   id: ID!
   collecting: Boolean!
+  fulfilled: Float
   goods: Goods!
   user: User!
   wishes(after: String, first: Int, before: String, last: Int): WishConnection!

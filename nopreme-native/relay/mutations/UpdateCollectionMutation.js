@@ -73,12 +73,10 @@ const mutation = graphql`
 `;
 
 function buildInput(selected) {
-  return Object.entries(selected)
-    .map(([itemId, num]) => ({
-      itemId,
-      num,
-    }))
-    .filter(({ num }) => num > 0);
+  return Object.entries(selected).map(([itemId, num]) => ({
+    itemId,
+    num,
+  }));
 }
 
 async function commit(environment, { goodsId, wishes, posessions }) {
