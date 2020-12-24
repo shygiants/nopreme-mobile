@@ -9,7 +9,7 @@ import Stack from "../components/Stack";
 import Badge from "../components/Badge";
 import OptionModal from "../components/OptionModal";
 import GoodsListItem from "../containers/GoodsListItem";
-import { getEventName, getGoodsName } from "../utils/enum";
+import { getEventName } from "../utils/enum";
 
 const styles = StyleSheet.create({
   container: {
@@ -86,8 +86,8 @@ function EventDetail({ navigation, route, relay, viewer }) {
             }) => (
               <GoodsListItem
                 key={goodsId}
-                title={name}
-                type={getGoodsName(type)}
+                name={name}
+                type={type}
                 img={src}
                 numItems={numItems}
                 collecting={collecting}
@@ -160,7 +160,7 @@ const FragmentContainer = createRefetchContainer(
     `,
   },
   graphql`
-    query EventDetailQuery($eventId: ID!) {
+    query EventDetailRefetchQuery($eventId: ID!) {
       viewer {
         ...EventDetail_viewer @arguments(eventId: $eventId)
       }

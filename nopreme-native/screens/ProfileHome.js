@@ -15,7 +15,6 @@ import Stack from "../components/Stack";
 import Tabs from "../components/Tabs";
 import HeaderButton from "../components/HeaderButton";
 import GoodsListItem from "../containers/GoodsListItem";
-import { getGoodsName } from "../utils/enum";
 
 const styles = StyleSheet.create({
   scroll: { height: "100%", width: "100%" },
@@ -81,9 +80,9 @@ function ProfileHome({ navigation, route, relay, viewer }) {
     return (
       <GoodsListItem
         key={goodsId}
-        title={name}
+        name={name}
         img={img.src}
-        type={getGoodsName(type)}
+        type={type}
         collecting
         numItems={numItems}
         fulfilled={fulfilled}
@@ -179,7 +178,7 @@ const FragmentContainer = createRefetchContainer(
     `,
   },
   graphql`
-    query ProfileHomeQuery {
+    query ProfileHomeRefetchQuery {
       viewer {
         ...ProfileHome_viewer
       }

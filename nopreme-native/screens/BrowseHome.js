@@ -5,18 +5,25 @@ import {
   ScrollView,
   SafeAreaView,
   RefreshControl,
+  View,
 } from "react-native";
 import { graphql, createRefetchContainer } from "react-relay";
 
 import { createQueryRenderer } from "../relay";
 import { LanguageContext } from "../contexts/LanguageContext";
 import Stack from "../components/Stack";
+import IconButton from "../components/IconButton";
 import EventCard from "../containers/EventCard";
 import { getEventName } from "../utils/enum";
 
 const styles = StyleSheet.create({
   scroll: { height: "100%" },
   container: { flexDirection: "column", width: "100%", padding: 16 },
+  title: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
   eventText: { fontSize: 28, fontWeight: "bold" },
 });
 
@@ -39,7 +46,15 @@ function BrowseHome({ navigation, relay, viewer }) {
         }
       >
         <Stack style={StyleSheet.compose(styles.container, { gap: 16 })}>
-          <Text style={styles.eventText}>{langCtx.dictionary.event}</Text>
+          <View style={styles.title}>
+            <Text style={styles.eventText}>{langCtx.dictionary.event}</Text>
+            <IconButton
+              style={{ color: "#333333", paddingLeft: 64 }}
+              name="md-chevron-forward"
+              onPress={() => navigation.push("EventList")}
+            />
+          </View>
+
           <ScrollView
             showsHorizontalScrollIndicator={false}
             style={{ width: "100%" }}

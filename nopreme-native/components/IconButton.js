@@ -2,7 +2,7 @@ import * as React from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-export default function HeaderButton({ style, name, disabled, onPress }) {
+export default function IconButton({ style, name, disabled, onPress }) {
   const icon = (
     <Ionicons
       name={name}
@@ -12,7 +12,7 @@ export default function HeaderButton({ style, name, disabled, onPress }) {
         },
         style
       )}
-      size={28}
+      size={32}
     />
   );
 
