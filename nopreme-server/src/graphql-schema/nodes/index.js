@@ -382,13 +382,16 @@ export const GraphQLViewer = new GraphQLObjectType({
           type: new GraphQLNonNull(GraphQLString),
         },
         eventId: {
-          type: new GraphQLNonNull(GraphQLID),
+          type: GraphQLID,
+        },
+        goodsType: {
+          type: GraphQLString,
         },
         ...connectionArgs,
       },
       resolve: async (
         root,
-        { artistName, eventId, after, before, first, last }
+        { artistName, eventId, goodsType, after, before, first, last }
       ) => {
         const artist = await getArtistByName({ name: artistName });
         if (!artist) return null;
@@ -396,6 +399,7 @@ export const GraphQLViewer = new GraphQLObjectType({
         const goodsCollection = await getGoodsCollection({
           artistId: artist._id,
           eventId,
+          goodsType,
         });
 
         return connectionFromArray([...goodsCollection], {

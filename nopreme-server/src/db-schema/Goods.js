@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
-import { buildUpdate } from "../utils/db";
+import { buildUpdate, buildFind } from "../utils/db";
 
 import GoodsTypes from "../assets/enum/goodsTypes.json";
 
@@ -51,12 +51,15 @@ export async function addGoods({ name, img, type, size, artist, event }) {
 }
 
 export async function getGoodsCollection(
-  { artistId, eventId },
+  { artistId, eventId, goodsType },
   sort = { sortBy: "name", order: 1 }
 ) {
+  // TODO: consider multiple sort
   const { sortBy, order } = sort;
 
-  return await Goods.find({ artist: artistId, event: eventId })
+  return await Goods.find(
+    buildFind({ artist: artistId, event: eventId, type: goodsType })
+  )
     .sort({ [sortBy]: order })
     .exec();
 }

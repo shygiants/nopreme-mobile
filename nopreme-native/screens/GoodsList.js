@@ -12,7 +12,7 @@ import { graphql, createFragmentContainer } from "react-relay";
 
 import { createQueryRenderer } from "../relay";
 
-import EventListItem from "../containers/EventListItem";
+import GoodsListItem from "../containers/GoodsListItem";
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -26,29 +26,31 @@ const styles = StyleSheet.create({
   },
 });
 
-function EventList({ navigation, viewer }) {
-  const { events } = viewer;
+function GoodsList({ navigation, viewer }) {
+  const { goodsCollection } = viewer;
   const window = useWindowDimensions();
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <FlatList
         style={{ width: window.width, padding: 16 }}
-        data={events.edges}
+        data={goodsCollection.edges}
         keyExtractor={(item) => item.node.eventId}
         renderItem={({
           item: {
-            node: { eventId, name, img, type, numGoods },
+            node: { goodsId, name, img, type, numItems, collecting, fulfilled },
           },
         }) => (
-          <EventListItem
+          <GoodsListItem
             name={name}
             type={type}
             img={img.src}
-            numGoods={numGoods}
+            numItems={numItems}
+            collecting={collecting}
+            fulfilled={fulfilled}
             onPress={() =>
-              navigation.push("EventDetail", {
-                eventId,
+              navigation.push("GoodsDetail", {
+                goodsId,
               })
             }
           />
@@ -59,33 +61,34 @@ function EventList({ navigation, viewer }) {
   );
 }
 
-const FragmentContainer = createFragmentContainer(EventList, {
+const FragmentContainer = createFragmentContainer(GoodsList, {
   viewer: graphql`
-    fragment EventList_viewer on Viewer
-    @argumentDefinitions(eventType: { type: "String" }) {
+    fragment GoodsList_viewer on Viewer
+    @argumentDefinitions(goodsType: { type: "String" }) {
       id
-      events(
+      goodsCollection(
         artistName: "IZ*ONE"
-        eventType: $eventType
+        goodsType: $goodsType
         first: 2147483647 # max GraphQLInt
       )
         @connection(
-          key: "EventList_events"
-          filters: ["artistName", "eventType"]
+          key: "BrowseHome_goodsCollection"
+          filters: ["artistName", "goodsType"]
         ) {
         edges {
           node {
             id
-            eventId
+            goodsId
             name
-            date
             type
             img {
               id
               imageId
               src
             }
-            numGoods(artistName: "IZ*ONE")
+            numItems
+            collecting
+            fulfilled
           }
         }
       }
@@ -96,9 +99,9 @@ const FragmentContainer = createFragmentContainer(EventList, {
 export default createQueryRenderer(
   FragmentContainer,
   graphql`
-    query EventListQuery($type: String) {
+    query GoodsListQuery($type: String) {
       viewer {
-        ...EventList_viewer @arguments(eventType: $type)
+        ...GoodsList_viewer @arguments(goodsType: $type)
       }
     }
   `

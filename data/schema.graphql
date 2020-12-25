@@ -15,7 +15,7 @@ type Viewer implements Node {
   viewer: User!
   events(artistName: String!, eventType: String, after: String, first: Int, before: String, last: Int): EventConnection!
   event(eventId: ID!): Event!
-  goodsCollection(artistName: String!, eventId: ID!, after: String, first: Int, before: String, last: Int): GoodsConnection!
+  goodsCollection(artistName: String!, eventId: ID, goodsType: String, after: String, first: Int, before: String, last: Int): GoodsConnection!
   goods(goodsId: ID!): Goods!
   items(goodsId: ID!, after: String, first: Int, before: String, last: Int): ItemConnection!
   collection(goodsId: ID!): Collection!

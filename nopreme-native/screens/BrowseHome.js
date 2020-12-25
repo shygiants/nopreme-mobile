@@ -15,7 +15,7 @@ import { LanguageContext } from "../contexts/LanguageContext";
 import Stack from "../components/Stack";
 import IconButton from "../components/IconButton";
 import EventCard from "../containers/EventCard";
-import { getEventName } from "../utils/enum";
+import GoodsCard from "../containers/GoodsCard";
 
 const styles = StyleSheet.create({
   scroll: { height: "100%" },
@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
-  eventText: { fontSize: 28, fontWeight: "bold" },
+  titleText: { fontSize: 28, fontWeight: "bold" },
 });
 
 function BrowseHome({ navigation, relay, viewer }) {
@@ -49,7 +49,7 @@ function BrowseHome({ navigation, relay, viewer }) {
       >
         <Stack style={StyleSheet.compose(styles.container, { gap: 16 })}>
           <View style={styles.title}>
-            <Text style={styles.eventText}>{langCtx.dictionary.event}</Text>
+            <Text style={styles.titleText}>{langCtx.dictionary.event}</Text>
             <IconButton
               style={{ color: "#333333", paddingLeft: 64 }}
               name="md-chevron-forward"
@@ -76,12 +76,54 @@ function BrowseHome({ navigation, relay, viewer }) {
                   <EventCard
                     key={eventId}
                     img={src}
-                    title={name}
-                    type={getEventName(type)}
+                    name={name}
+                    type={type}
                     numGoods={numGoods}
                     onPress={() =>
                       navigation.push("EventDetail", {
                         eventId,
+                      })
+                    }
+                  />
+                )
+              )}
+            </Stack>
+          </ScrollView>
+
+          <View style={styles.title}>
+            <Text style={styles.titleText}>{langCtx.dictionary.photocard}</Text>
+            <IconButton
+              style={{ color: "#333333", paddingLeft: 64 }}
+              name="md-chevron-forward"
+              onPress={() => navigation.push("GoodsList", { screen: "CARD" })}
+            />
+          </View>
+
+          <ScrollView
+            showsHorizontalScrollIndicator={false}
+            style={{ width: "100%", overflow: "visible" }}
+            horizontal
+          >
+            <Stack style={{ gap: 10, flexDirection: "row" }}>
+              {viewer.goodsCollection.edges.map(
+                ({
+                  node: {
+                    goodsId,
+                    name,
+                    img: { src },
+                    type,
+                    numItems,
+                  },
+                }) => (
+                  <GoodsCard
+                    key={goodsId}
+                    img={src}
+                    name={name}
+                    type={type}
+                    numItems={numItems}
+                    onPress={() =>
+                      navigation.push("GoodsDetail", {
+                        goodsId,
                       })
                     }
                   />
@@ -123,6 +165,30 @@ const FragmentContainer = createRefetchContainer(
                 src
               }
               numGoods(artistName: "IZ*ONE")
+            }
+          }
+        }
+        goodsCollection(
+          artistName: "IZ*ONE"
+          goodsType: "CARD"
+          first: 3 # max GraphQLInt
+        )
+          @connection(
+            key: "BrowseHome_goodsCollection"
+            filters: ["artistName", "goodsType"]
+          ) {
+          edges {
+            node {
+              id
+              goodsId
+              name
+              type
+              img {
+                id
+                imageId
+                src
+              }
+              numItems
             }
           }
         }

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, Pressable } from "react-native";
 
-import Stack from "../components/Stack";
+import Stack from "./Stack";
 
 const styles = StyleSheet.create({
   tabTitle: {

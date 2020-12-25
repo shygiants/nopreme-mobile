@@ -5,8 +5,8 @@ import { LanguageContext } from "../contexts/LanguageContext";
 import BrowseHome from "../screens/BrowseHome";
 import EventDetail from "../screens/EventDetail";
 import GoodsDetail from "../screens/GoodsDetail";
-// import EventList from "../screens/EventList";
 import EventListTabNavigator from "../navigation/EventListTabNavigator";
+import GoodsListTabNavigator from "../navigation/GoodsListTabNavigator";
 
 const Stack = createStackNavigator();
 
@@ -53,10 +53,27 @@ export default function BrowseTab() {
 
       <Stack.Screen
         name="EventList"
-        // component={EventList}
         component={EventListTabNavigator}
         options={{
           headerTitle: langCtx.dictionary.event,
+          headerTintColor: "black",
+          headerBackTitleVisible: false,
+          headerLeftContainerStyle: {
+            paddingHorizontal: 8,
+          },
+          headerRightContainerStyle: {
+            paddingHorizontal: 8,
+          },
+          headerStyle: {
+            shadowOffset: { width: 0, height: 0 },
+          },
+        }}
+      />
+      <Stack.Screen
+        name="GoodsList"
+        component={GoodsListTabNavigator}
+        options={{
+          headerTitle: langCtx.dictionary.goods,
           headerTintColor: "black",
           headerBackTitleVisible: false,
           headerLeftContainerStyle: {

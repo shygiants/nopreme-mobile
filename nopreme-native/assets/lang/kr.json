@@ -14,5 +14,7 @@
   "updateCollection": "수집 현황 수정",
   "collecting": "수집 중",
   "collected": "수집 완료",
-  "ea": "종"
+  "ea": "종",
+  "all": "전체",
+  "photocard": "포토카드"
 }

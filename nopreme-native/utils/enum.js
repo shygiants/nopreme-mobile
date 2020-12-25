@@ -12,3 +12,7 @@ export function getGoodsName(val) {
 export function getEventTypes() {
   return EventTypes;
 }
+
+export function getGoodsTypes() {
+  return GoodsTypes;
+}
