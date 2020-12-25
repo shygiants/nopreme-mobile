@@ -13,7 +13,7 @@ import { StatusBar } from "expo-status-bar";
 import { createQueryRenderer } from "../relay";
 import { LanguageContext } from "../contexts/LanguageContext";
 import Stack from "../components/Stack";
-import IconButton from "../components/IconButton";
+import HorizontalListView from "../components/HorizontalListView";
 import EventCard from "../containers/EventCard";
 import GoodsCard from "../containers/GoodsCard";
 
@@ -48,19 +48,9 @@ function BrowseHome({ navigation, relay, viewer }) {
         }
       >
         <Stack style={StyleSheet.compose(styles.container, { gap: 16 })}>
-          <View style={styles.title}>
-            <Text style={styles.titleText}>{langCtx.dictionary.event}</Text>
-            <IconButton
-              style={{ color: "#333333", paddingLeft: 64 }}
-              name="md-chevron-forward"
-              onPress={() => navigation.push("EventList")}
-            />
-          </View>
-
-          <ScrollView
-            showsHorizontalScrollIndicator={false}
-            style={{ width: "100%", overflow: "visible" }}
-            horizontal
+          <HorizontalListView
+            title={langCtx.dictionary.event}
+            onMorePress={() => navigation.push("EventList")}
           >
             <Stack style={{ gap: 10, flexDirection: "row" }}>
               {viewer.events.edges.map(
@@ -88,21 +78,11 @@ function BrowseHome({ navigation, relay, viewer }) {
                 )
               )}
             </Stack>
-          </ScrollView>
+          </HorizontalListView>
 
-          <View style={styles.title}>
-            <Text style={styles.titleText}>{langCtx.dictionary.photocard}</Text>
-            <IconButton
-              style={{ color: "#333333", paddingLeft: 64 }}
-              name="md-chevron-forward"
-              onPress={() => navigation.push("GoodsList", { screen: "CARD" })}
-            />
-          </View>
-
-          <ScrollView
-            showsHorizontalScrollIndicator={false}
-            style={{ width: "100%", overflow: "visible" }}
-            horizontal
+          <HorizontalListView
+            title={langCtx.dictionary.photocard}
+            onMorePress={() => navigation.push("GoodsList", { screen: "CARD" })}
           >
             <Stack style={{ gap: 10, flexDirection: "row" }}>
               {viewer.goodsCollection.edges.map(
@@ -130,7 +110,7 @@ function BrowseHome({ navigation, relay, viewer }) {
                 )
               )}
             </Stack>
-          </ScrollView>
+          </HorizontalListView>
         </Stack>
       </ScrollView>
     </SafeAreaView>

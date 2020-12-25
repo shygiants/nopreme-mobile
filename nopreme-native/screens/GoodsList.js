@@ -35,7 +35,7 @@ function GoodsList({ navigation, viewer }) {
       <FlatList
         style={{ width: window.width, padding: 16 }}
         data={goodsCollection.edges}
-        keyExtractor={(item) => item.node.eventId}
+        keyExtractor={(item) => item.node.goodsId}
         renderItem={({
           item: {
             node: { goodsId, name, img, type, numItems, collecting, fulfilled },

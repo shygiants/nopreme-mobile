@@ -1,7 +1,8 @@
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
+const ObjectId = mongoose.Types.ObjectId;
 
-import { buildUpdate, buildFind } from "../utils/db";
+import { buildUpdate, buildFind, buildSort } from "../utils/db";
 
 import GoodsTypes from "../assets/enum/goodsTypes.json";
 
@@ -52,15 +53,29 @@ export async function addGoods({ name, img, type, size, artist, event }) {
 
 export async function getGoodsCollection(
   { artistId, eventId, goodsType },
-  sort = { sortBy: "name", order: 1 }
+  sort = [
+    { sortBy: "event.date", order: -1 },
+    { sortBy: "name", order: 1 },
+  ]
 ) {
   // TODO: consider multiple sort
   const { sortBy, order } = sort;
 
-  return await Goods.find(
-    buildFind({ artist: artistId, event: eventId, type: goodsType })
-  )
-    .sort({ [sortBy]: order })
+  return await Goods.aggregate()
+    .match(
+      buildFind({
+        artist: artistId && new ObjectId(artistId),
+        event: eventId && new ObjectId(eventId),
+        type: goodsType,
+      })
+    )
+    .lookup({
+      from: "events",
+      localField: "event",
+      foreignField: "_id",
+      as: "event",
+    })
+    .sort(buildSort([sort]))
     .exec();
 }
 

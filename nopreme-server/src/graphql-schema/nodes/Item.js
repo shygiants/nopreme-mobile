@@ -9,7 +9,8 @@ import {
 
 import { GraphQLImage, GraphQLArtist } from ".";
 import { getImageById } from "../../db-schema/Image";
-import { getArtistById } from "../../db-schema/Artist";
+import { getArtistById, Artist } from "../../db-schema/Artist";
+import { isObjectId } from "../../utils/db";
 
 export default {
   id: globalIdField("Item", (item) => item._id),
@@ -24,7 +25,11 @@ export default {
     type: new GraphQLNonNull(new GraphQLList(GraphQLArtist)),
     resolve: async (item) =>
       await Promise.all(
-        item.artist.map((artist) => getArtistById({ _id: artist }))
+        item.artist.map((artist) => {
+          return isObjectId(artist)
+            ? getArtistById({ _id: artist })
+            : Promise.resolve(artist);
+        })
       ),
   },
   img: {
