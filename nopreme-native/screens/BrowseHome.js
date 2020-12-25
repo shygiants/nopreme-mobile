@@ -32,6 +32,8 @@ function BrowseHome({ navigation, relay, viewer }) {
   const langCtx = useContext(LanguageContext);
   const [refreshing, setRefreshing] = useState(false);
 
+  const { events, photoCards, photos } = viewer;
+
   return (
     <SafeAreaView style={{ backgroundColor: "white" }}>
       <StatusBar />
@@ -53,7 +55,7 @@ function BrowseHome({ navigation, relay, viewer }) {
             onMorePress={() => navigation.push("EventList")}
           >
             <Stack style={{ gap: 10, flexDirection: "row" }}>
-              {viewer.events.edges.map(
+              {events.edges.map(
                 ({
                   node: {
                     eventId,
@@ -85,7 +87,41 @@ function BrowseHome({ navigation, relay, viewer }) {
             onMorePress={() => navigation.push("GoodsList", { screen: "CARD" })}
           >
             <Stack style={{ gap: 10, flexDirection: "row" }}>
-              {viewer.goodsCollection.edges.map(
+              {photoCards.edges.map(
+                ({
+                  node: {
+                    goodsId,
+                    name,
+                    img: { src },
+                    type,
+                    numItems,
+                  },
+                }) => (
+                  <GoodsCard
+                    key={goodsId}
+                    img={src}
+                    name={name}
+                    type={type}
+                    numItems={numItems}
+                    onPress={() =>
+                      navigation.push("GoodsDetail", {
+                        goodsId,
+                      })
+                    }
+                  />
+                )
+              )}
+            </Stack>
+          </HorizontalListView>
+
+          <HorizontalListView
+            title={langCtx.dictionary.photo}
+            onMorePress={() =>
+              navigation.push("GoodsList", { screen: "PHOTO" })
+            }
+          >
+            <Stack style={{ gap: 10, flexDirection: "row" }}>
+              {photos.edges.map(
                 ({
                   node: {
                     goodsId,
@@ -148,13 +184,37 @@ const FragmentContainer = createRefetchContainer(
             }
           }
         }
-        goodsCollection(
+        photoCards: goodsCollection(
           artistName: "IZ*ONE"
           goodsType: "CARD"
           first: 3 # max GraphQLInt
         )
           @connection(
-            key: "BrowseHome_goodsCollection"
+            key: "BrowseHome_photoCards"
+            filters: ["artistName", "goodsType"]
+          ) {
+          edges {
+            node {
+              id
+              goodsId
+              name
+              type
+              img {
+                id
+                imageId
+                src
+              }
+              numItems
+            }
+          }
+        }
+        photos: goodsCollection(
+          artistName: "IZ*ONE"
+          goodsType: "PHOTO"
+          first: 3 # max GraphQLInt
+        )
+          @connection(
+            key: "BrowseHome_photos"
             filters: ["artistName", "goodsType"]
           ) {
           edges {
