@@ -1,11 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   StyleSheet,
   Text,
   View,
   SafeAreaView,
-  ScrollView,
-  useWindowDimensions,
   FlatList,
   SectionList,
 } from "react-native";
@@ -13,6 +11,7 @@ import { graphql, createFragmentContainer } from "react-relay";
 import { LinearGradient } from "expo-linear-gradient";
 
 import { createQueryRenderer } from "../relay";
+import { LanguageContext } from "../contexts/LanguageContext";
 import SortButton from "../components/SortButton";
 import OptionModal from "../components/OptionModal";
 import GoodsListItem from "../containers/GoodsListItem";
@@ -24,8 +23,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   container: {
-    width: "100%",
-    padding: 16,
+    paddingHorizontal: 16,
   },
   section: {
     paddingVertical: 8,
@@ -52,9 +50,9 @@ function SectionHeader({ title }) {
 }
 
 function GoodsList({ navigation, viewer }) {
+  const langCtx = useContext(LanguageContext);
   const [modalVisible, setModalVisible] = useState(false);
   const { goodsCollection } = viewer;
-  const window = useWindowDimensions();
 
   // TODO: navigation.setParams
 
@@ -79,7 +77,10 @@ function GoodsList({ navigation, viewer }) {
         visible={modalVisible}
         onDismiss={() => setModalVisible(false)}
         options={[
-          { title: "최근 이벤트 순", onSelect: () => console.log("sort") },
+          {
+            title: langCtx.dictionary.latestEvent,
+            onSelect: () => console.log("sort"),
+          },
         ]}
       />
 
@@ -106,11 +107,11 @@ function GoodsList({ navigation, viewer }) {
             }
           />
         )}
-        style={{ width: window.width, paddingHorizontal: 16 }}
+        style={styles.container}
         ListHeaderComponent={() => (
           <View style={{ paddingTop: 16 }}>
             <SortButton
-              title="최근 이벤트 순"
+              title={langCtx.dictionary.latestEvent}
               onPress={() => setModalVisible(true)}
             />
           </View>

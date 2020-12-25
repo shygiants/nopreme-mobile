@@ -16,5 +16,7 @@
   "collected": "수집 완료",
   "ea": "종",
   "all": "전체",
-  "photocard": "포토카드"
+  "photocard": "포토카드",
+  "latest": "최근 순",
+  "latestEvent": "최근 이벤트 순"
 }

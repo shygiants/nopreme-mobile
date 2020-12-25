@@ -1,17 +1,11 @@
-import React from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  SafeAreaView,
-  ScrollView,
-  useWindowDimensions,
-  FlatList,
-} from "react-native";
+import React, { useState, useContext } from "react";
+import { StyleSheet, Text, View, SafeAreaView, FlatList } from "react-native";
 import { graphql, createFragmentContainer } from "react-relay";
 
 import { createQueryRenderer } from "../relay";
-
+import { LanguageContext } from "../contexts/LanguageContext";
+import SortButton from "../components/SortButton";
+import OptionModal from "../components/OptionModal";
 import EventListItem from "../containers/EventListItem";
 
 const styles = StyleSheet.create({
@@ -21,21 +15,32 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   container: {
-    width: "100%",
-    padding: 16,
+    paddingHorizontal: 16,
   },
 });
 
+function gap({ width, height }) {
+  return () => <View style={{ width, height }} />;
+}
+
 function EventList({ navigation, viewer }) {
+  const langCtx = useContext(LanguageContext);
+  const [modalVisible, setModalVisible] = useState(false);
   const { events } = viewer;
-  const window = useWindowDimensions();
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      <OptionModal
+        visible={modalVisible}
+        onDismiss={() => setModalVisible(false)}
+        options={[
+          {
+            title: langCtx.dictionary.latest,
+            onSelect: () => console.log("sort"),
+          },
+        ]}
+      />
       <FlatList
-        ListEmptyComponent={() => <Text>EMPTY</Text>}
-        ListFooterComponent={() => <View style={{ height: 32 }} />}
-        style={{ width: window.width, padding: 16 }}
         data={events.edges}
         keyExtractor={(item) => item.node.eventId}
         renderItem={({
@@ -55,7 +60,18 @@ function EventList({ navigation, viewer }) {
             }
           />
         )}
+        style={styles.container}
+        ListHeaderComponent={() => (
+          <View style={{ paddingTop: 16 }}>
+            <SortButton
+              title={langCtx.dictionary.latest}
+              onPress={() => setModalVisible(true)}
+            />
+          </View>
+        )}
+        ListFooterComponent={gap({ height: 16 })}
         ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
+        ListEmptyComponent={() => <Text>EMPTY</Text>}
       />
     </SafeAreaView>
   );
