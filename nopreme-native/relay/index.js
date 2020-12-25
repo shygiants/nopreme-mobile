@@ -22,6 +22,7 @@ export function createQueryRenderer(
             return <Text>Error on QueryRenderer!</Text>;
           }
           if (!props) {
+            // TODO: action indicator
             return <Text>Processing...</Text>;
           }
 

@@ -1,14 +1,7 @@
 import React from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  ScrollView,
-  Pressable,
-  TouchableOpacity,
-} from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { StyleSheet, Text, View } from "react-native";
 
+import IconButton from "./IconButton";
 import Stack from "./Stack";
 
 const styles = StyleSheet.create({
@@ -44,13 +37,9 @@ export default function Counter({ name, count, onAdd, onSub }) {
           {name}
         </Text>
         <Stack style={StyleSheet.compose(styles.counter, { gap: 32 })}>
-          <TouchableOpacity onPress={onSub}>
-            <Ionicons style={styles.icon} name="md-remove" size={32} />
-          </TouchableOpacity>
+          <IconButton style={styles.icon} name="md-remove" onPress={onSub} />
           <Text style={styles.number}>{count}</Text>
-          <TouchableOpacity onPress={onAdd}>
-            <Ionicons style={styles.icon} name="md-add" size={32} />
-          </TouchableOpacity>
+          <IconButton style={styles.icon} name="md-add" onPress={onAdd} />
         </Stack>
       </View>
     </View>

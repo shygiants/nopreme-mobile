@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -11,7 +11,8 @@ import {
 import { graphql, createFragmentContainer } from "react-relay";
 
 import { createQueryRenderer } from "../relay";
-
+import SortButton from "../components/SortButton";
+import OptionModal from "../components/OptionModal";
 import GoodsListItem from "../containers/GoodsListItem";
 
 const styles = StyleSheet.create({
@@ -27,12 +28,30 @@ const styles = StyleSheet.create({
 });
 
 function GoodsList({ navigation, viewer }) {
+  const [modalVisible, setModalVisible] = useState(false);
   const { goodsCollection } = viewer;
   const window = useWindowDimensions();
 
+  // TODO: navigation.setParams
+
   return (
     <SafeAreaView style={styles.safeArea}>
+      <OptionModal
+        visible={modalVisible}
+        onDismiss={() => setModalVisible(false)}
+        options={[
+          { title: "최근 이벤트 순", onSelect: () => console.log("sort") },
+        ]}
+      />
       <FlatList
+        ListHeaderComponent={() => (
+          <SortButton
+            title="최근 이벤트 순"
+            onPress={() => setModalVisible(true)}
+          />
+        )}
+        ListFooterComponent={() => <View style={{ height: 32 }} />}
+        ListEmptyComponent={() => <Text>EMPTY</Text>}
         style={{ width: window.width, padding: 16 }}
         data={goodsCollection.edges}
         keyExtractor={(item) => item.node.goodsId}

@@ -33,6 +33,8 @@ function EventList({ navigation, viewer }) {
   return (
     <SafeAreaView style={styles.safeArea}>
       <FlatList
+        ListEmptyComponent={() => <Text>EMPTY</Text>}
+        ListFooterComponent={() => <View style={{ height: 32 }} />}
         style={{ width: window.width, padding: 16 }}
         data={events.edges}
         keyExtractor={(item) => item.node.eventId}
