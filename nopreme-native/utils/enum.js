@@ -8,3 +8,7 @@ export function getEventName(val) {
 export function getGoodsName(val) {
   return GoodsTypes.find(({ value }) => value === val).name;
 }
+
+export function getEventTypes() {
+  return EventTypes;
+}

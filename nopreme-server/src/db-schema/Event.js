@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
 import { getArtistByName } from "./Artist";
-import { buildUpdate } from "../utils/db";
+import { buildUpdate, buildFind } from "../utils/db";
 import EventTypes from "../assets/enum/eventTypes.json";
 
 const eventSchema = new mongoose.Schema({
@@ -45,12 +45,12 @@ export async function addEvent({ name, img, date, type, artist }) {
 }
 
 export async function getEvents(
-  { artistId },
+  { artistId, eventType },
   sort = { sortBy: "date", order: -1 }
 ) {
   const { sortBy, order } = sort;
 
-  return await Event.find({ artist: artistId })
+  return await Event.find(buildFind({ artist: artistId, type: eventType }))
     .sort({ [sortBy]: order })
     .exec();
 }
@@ -77,12 +77,12 @@ export async function removeEvent({ _id }) {
 }
 
 export async function getEventsByArtistName(
-  { artistName },
+  { artistName, eventType },
   sort = { sortBy: "date", order: -1 }
 ) {
   const artist = await getArtistByName({ name: artistName });
 
   if (!artist) return null;
 
-  return await getEvents({ artistId: artist._id }, sort);
+  return await getEvents({ artistId: artist._id, eventType }, sort);
 }

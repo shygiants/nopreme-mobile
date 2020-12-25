@@ -1,11 +1,18 @@
 import React from "react";
-import { StyleSheet, Text, View, SafeAreaView, ScrollView } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  SafeAreaView,
+  ScrollView,
+  useWindowDimensions,
+  FlatList,
+} from "react-native";
 import { graphql, createFragmentContainer } from "react-relay";
 
 import { createQueryRenderer } from "../relay";
 
 import EventListItem from "../containers/EventListItem";
-import Stack from "../components/Stack";
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -14,47 +21,58 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   container: {
+    width: "100%",
     padding: 16,
   },
 });
 
 function EventList({ navigation, viewer }) {
   const { events } = viewer;
+  const window = useWindowDimensions();
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView>
-        <Stack style={StyleSheet.compose(styles.container, { gap: 10 })}>
-          {events.edges.map(
-            ({ node: { eventId, name, img, type, numGoods } }) => (
-              <EventListItem
-                key={eventId}
-                name={name}
-                type={type}
-                img={img.src}
-                numGoods={numGoods}
-                onPress={() =>
-                  navigation.push("EventDetail", {
-                    eventId,
-                  })
-                }
-              />
-            )
-          )}
-        </Stack>
-      </ScrollView>
+      <FlatList
+        style={{ width: window.width, padding: 16 }}
+        data={events.edges}
+        keyExtractor={(item) => item.node.eventId}
+        renderItem={({
+          item: {
+            node: { eventId, name, img, type, numGoods },
+          },
+        }) => (
+          <EventListItem
+            name={name}
+            type={type}
+            img={img.src}
+            numGoods={numGoods}
+            onPress={() =>
+              navigation.push("EventDetail", {
+                eventId,
+              })
+            }
+          />
+        )}
+        ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
+      />
     </SafeAreaView>
   );
 }
 
 const FragmentContainer = createFragmentContainer(EventList, {
   viewer: graphql`
-    fragment EventList_viewer on Viewer {
+    fragment EventList_viewer on Viewer
+    @argumentDefinitions(eventType: { type: "String" }) {
       id
       events(
         artistName: "IZ*ONE"
+        eventType: $eventType
         first: 2147483647 # max GraphQLInt
-      ) @connection(key: "EventList_events", filters: ["artistName"]) {
+      )
+        @connection(
+          key: "EventList_events"
+          filters: ["artistName", "eventType"]
+        ) {
         edges {
           node {
             id
@@ -78,9 +96,9 @@ const FragmentContainer = createFragmentContainer(EventList, {
 export default createQueryRenderer(
   FragmentContainer,
   graphql`
-    query EventListQuery {
+    query EventListQuery($eventType: String) {
       viewer {
-        ...EventList_viewer
+        ...EventList_viewer @arguments(eventType: $eventType)
       }
     }
   `

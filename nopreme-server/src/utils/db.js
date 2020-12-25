@@ -11,6 +11,17 @@ export function buildUpdate(update) {
   return copied;
 }
 
+export function buildFind(update) {
+  const copied = { ...update };
+  for (let [k, v] of Object.entries(copied)) {
+    if (v === undefined || v === null) {
+      delete copied[k];
+    }
+  }
+
+  return copied;
+}
+
 export function buildSort(sort) {
   if (sort instanceof Array) return mergeObjects(sort.map(buildSort).reverse());
   const { sortBy, order } = sort;

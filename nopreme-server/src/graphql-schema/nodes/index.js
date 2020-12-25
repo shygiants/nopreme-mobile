@@ -342,10 +342,19 @@ export const GraphQLViewer = new GraphQLObjectType({
         artistName: {
           type: new GraphQLNonNull(GraphQLString),
         },
+        eventType: {
+          type: GraphQLString,
+        },
         ...connectionArgs,
       },
-      resolve: async (viewer, { artistName, after, before, first, last }) => {
-        const events = await getEventsByArtistName({ artistName });
+      resolve: async (
+        viewer,
+        { artistName, eventType, after, before, first, last }
+      ) => {
+        const events = await getEventsByArtistName({
+          artistName,
+          eventType,
+        });
 
         return connectionFromArray([...events], {
           after,

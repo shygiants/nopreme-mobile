@@ -8,6 +8,7 @@ import {
   View,
 } from "react-native";
 import { graphql, createRefetchContainer } from "react-relay";
+import { StatusBar } from "expo-status-bar";
 
 import { createQueryRenderer } from "../relay";
 import { LanguageContext } from "../contexts/LanguageContext";
@@ -33,6 +34,7 @@ function BrowseHome({ navigation, relay, viewer }) {
 
   return (
     <SafeAreaView style={{ backgroundColor: "white" }}>
+      <StatusBar />
       <ScrollView
         style={styles.scroll}
         refreshControl={
@@ -57,7 +59,7 @@ function BrowseHome({ navigation, relay, viewer }) {
 
           <ScrollView
             showsHorizontalScrollIndicator={false}
-            style={{ width: "100%" }}
+            style={{ width: "100%", overflow: "visible" }}
             horizontal
           >
             <Stack style={{ gap: 10, flexDirection: "row" }}>
@@ -106,7 +108,7 @@ const FragmentContainer = createRefetchContainer(
         }
         events(
           artistName: "IZ*ONE"
-          first: 2147483647 # max GraphQLInt
+          first: 3 # TODO: Max num events
         ) @connection(key: "BrowseHome_events", filters: ["artistName"]) {
           edges {
             node {
@@ -128,7 +130,7 @@ const FragmentContainer = createRefetchContainer(
     `,
   },
   graphql`
-    query BrowseHomeQuery {
+    query BrowseHomeRefetchQuery {
       viewer {
         ...BrowseHome_viewer
       }

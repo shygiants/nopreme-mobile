@@ -13,7 +13,7 @@ type Viewer implements Node {
   """The ID of an object"""
   id: ID!
   viewer: User!
-  events(artistName: String!, after: String, first: Int, before: String, last: Int): EventConnection!
+  events(artistName: String!, eventType: String, after: String, first: Int, before: String, last: Int): EventConnection!
   event(eventId: ID!): Event!
   goodsCollection(artistName: String!, eventId: ID!, after: String, first: Int, before: String, last: Int): GoodsConnection!
   goods(goodsId: ID!): Goods!
