@@ -7,8 +7,10 @@ import {
   ScrollView,
   useWindowDimensions,
   FlatList,
+  SectionList,
 } from "react-native";
 import { graphql, createFragmentContainer } from "react-relay";
+import { LinearGradient } from "expo-linear-gradient";
 
 import { createQueryRenderer } from "../relay";
 import SortButton from "../components/SortButton";
@@ -25,7 +27,29 @@ const styles = StyleSheet.create({
     width: "100%",
     padding: 16,
   },
+  section: {
+    paddingVertical: 8,
+  },
+  sectionText: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
 });
+
+function gap({ width, height }) {
+  return () => <View style={{ width, height }} />;
+}
+
+function SectionHeader({ title }) {
+  return (
+    <LinearGradient
+      colors={["rgba(255,255,255,0.8)", "rgba(255,255,255,0)"]}
+      style={styles.section}
+    >
+      <Text style={styles.sectionText}>{title}</Text>
+    </LinearGradient>
+  );
+}
 
 function GoodsList({ navigation, viewer }) {
   const [modalVisible, setModalVisible] = useState(false);
@@ -33,6 +57,21 @@ function GoodsList({ navigation, viewer }) {
   const window = useWindowDimensions();
 
   // TODO: navigation.setParams
+
+  const sections = [];
+  goodsCollection.edges.forEach(({ node }) => {
+    const {
+      event: { eventId, name },
+    } = node;
+
+    const found = sections.find((event) => event.eventId === eventId);
+
+    if (found) {
+      found.data.push(node);
+    } else {
+      sections.push({ eventId, name, data: [node] });
+    }
+  });
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -43,22 +82,15 @@ function GoodsList({ navigation, viewer }) {
           { title: "최근 이벤트 순", onSelect: () => console.log("sort") },
         ]}
       />
-      <FlatList
-        ListHeaderComponent={() => (
-          <SortButton
-            title="최근 이벤트 순"
-            onPress={() => setModalVisible(true)}
-          />
+
+      <SectionList
+        sections={sections}
+        keyExtractor={(item) => item.goodsId}
+        renderSectionHeader={({ section: { name } }) => (
+          <SectionHeader title={name} />
         )}
-        ListFooterComponent={() => <View style={{ height: 32 }} />}
-        ListEmptyComponent={() => <Text>EMPTY</Text>}
-        style={{ width: window.width, padding: 16 }}
-        data={goodsCollection.edges}
-        keyExtractor={(item) => item.node.goodsId}
         renderItem={({
-          item: {
-            node: { goodsId, name, img, type, numItems, collecting, fulfilled },
-          },
+          item: { goodsId, name, img, type, numItems, collecting, fulfilled },
         }) => (
           <GoodsListItem
             name={name}
@@ -74,7 +106,21 @@ function GoodsList({ navigation, viewer }) {
             }
           />
         )}
-        ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
+        style={{ width: window.width, paddingHorizontal: 16 }}
+        ListHeaderComponent={() => (
+          <View style={{ paddingTop: 16 }}>
+            <SortButton
+              title="최근 이벤트 순"
+              onPress={() => setModalVisible(true)}
+            />
+          </View>
+        )}
+        ListFooterComponent={gap({ height: 16 })}
+        SectionSeparatorComponent={({ leadingItem }) => (
+          <View style={{ height: leadingItem ? 24 : 0 }} />
+        )}
+        ItemSeparatorComponent={gap({ height: 10 })}
+        ListEmptyComponent={() => <Text>EMPTY</Text>}
       />
     </SafeAreaView>
   );
@@ -108,6 +154,11 @@ const FragmentContainer = createFragmentContainer(GoodsList, {
             numItems
             collecting
             fulfilled
+            event {
+              id
+              eventId
+              name
+            }
           }
         }
       }

@@ -1,15 +1,9 @@
 import { globalIdField } from "graphql-relay";
-import {
-  GraphQLID,
-  GraphQLNonNull,
-  GraphQLString,
-  GraphQLList,
-  GraphQLInt,
-} from "graphql";
+import { GraphQLID, GraphQLNonNull, GraphQLList, GraphQLInt } from "graphql";
 
 import { GraphQLImage, GraphQLArtist } from ".";
 import { getImageById } from "../../db-schema/Image";
-import { getArtistById, Artist } from "../../db-schema/Artist";
+import { getArtistById } from "../../db-schema/Artist";
 import { isObjectId } from "../../utils/db";
 
 export default {

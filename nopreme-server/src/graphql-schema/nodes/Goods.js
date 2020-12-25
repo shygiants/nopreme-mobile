@@ -13,6 +13,7 @@ import { getImageById } from "../../db-schema/Image";
 import { getEventById } from "../../db-schema/Event";
 import { getItems } from "../../db-schema/Item";
 import { getFulfilled, isCollecting } from "../../db-schema/Collection";
+import { isObjectId } from "../../utils/db";
 
 export default {
   id: globalIdField("Goods", (goods) => goods._id),
@@ -41,8 +42,13 @@ export default {
   },
   event: {
     type: GraphQLEvent,
-    resolve: async (goods) =>
-      goods.event ? await getEventById({ _id: goods.event }) : null,
+    resolve: async (goods) => {
+      if (!goods.event) return null;
+
+      return isObjectId(goods.event)
+        ? await getEventById({ _id: goods.event })
+        : goods.event;
+    },
   },
   numItems: {
     type: GraphQLInt,

@@ -75,6 +75,7 @@ export async function getGoodsCollection(
       foreignField: "_id",
       as: "event",
     })
+    .unwind("event")
     .sort(buildSort([sort]))
     .exec();
 }
