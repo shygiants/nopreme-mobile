@@ -1,7 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, View, ScrollView, Pressable } from "react-native";
-
-import Badge from "./Badge";
+import { StyleSheet, Text, View } from "react-native";
 
 const ACCENT_COLOR = "#7755CC";
 
@@ -15,17 +13,45 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     opacity: 0.5,
   },
-  wish: {
+
+  progressContainer: {
+    borderRadius: 18,
+    backgroundColor: "#DDDDDD",
     position: "absolute",
-    right: 7,
-    top: 7,
-    backgroundColor: ACCENT_COLOR,
-    borderColor: ACCENT_COLOR,
+    bottom: 8,
+    left: 8,
+    right: 8,
   },
-  wishText: {
+  progress: {
+    borderRadius: 18,
+    backgroundColor: "#7755CC",
+    position: "absolute",
+    height: "100%",
+  },
+  progressText: {
+    textAlign: "center",
+    fontSize: 10,
     color: "white",
+    fontWeight: "bold",
+    paddingVertical: 1,
   },
 });
+
+function ProgressBar({ fulfilled, target }) {
+  const progress = Math.min(fulfilled / target, 1);
+  const percentage = `${(progress * 100).toFixed(0)}%`;
+
+  return (
+    <View style={styles.progressContainer}>
+      <View
+        style={StyleSheet.compose(styles.progress, {
+          width: percentage,
+        })}
+      />
+      <Text style={styles.progressText}>{`${fulfilled} / ${target}`}</Text>
+    </View>
+  );
+}
 
 export default function WishIndicator({ children, numWishes, fulfilled }) {
   return (
@@ -37,13 +63,7 @@ export default function WishIndicator({ children, numWishes, fulfilled }) {
           <View style={styles.blur} />
         </View>
       )}
-      {
-        <Badge
-          badgeStyle={styles.wish}
-          badgeTextStyle={styles.wishText}
-          text={`${fulfilled} / ${numWishes}`}
-        />
-      }
+      <ProgressBar fulfilled={fulfilled} target={numWishes} />
     </View>
   );
 }
