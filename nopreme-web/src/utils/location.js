@@ -1,6 +1,7 @@
-export function getQueryParam(key) {
+export function parseQuery(match) {
   const params = new URL(window.document.location).searchParams;
-  return params.get(key);
+
+  return { ...match.location.query, ...Object.fromEntries(params.entries()) };
 }
 
 export function getRootURL() {

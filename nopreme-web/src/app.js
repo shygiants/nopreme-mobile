@@ -5,6 +5,7 @@ import { HashProtocol, BrowserProtocol, queryMiddleware } from "farce";
 
 import App from "./screens/App";
 import Home from "./screens/Home";
+import GetToken from "./screens/GetToken";
 import SignIn from "./screens/SignIn";
 
 const Router = createFarceRouter({
@@ -13,7 +14,8 @@ const Router = createFarceRouter({
   routeConfig: makeRouteConfig(
     <Route path="/" Component={App}>
       <Route Component={Home} />
-      <Route path="signin" Component={SignIn} />
+      <Route path="signIn" Component={SignIn} />
+      <Route path="getToken" Component={GetToken} />
     </Route>
   ),
 });

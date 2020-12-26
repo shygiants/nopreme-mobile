@@ -46,6 +46,7 @@ export default function ImgBGScroll({
   refreshing,
   onRefresh,
 }) {
+  // TODO: Animation
   const [imgShown, setImgShown] = useState(true);
   const [aspectRatio, setAspectRatio] = useState(1);
 

@@ -8,7 +8,7 @@ import Kakao from "../utils/kakao";
 
 const CHECK_INIT_INTERVAL = 100;
 
-export default function KakaoLoginButton({ redirectUri }) {
+export default function KakaoLoginButton({ redirectUri, state }) {
   const [initialized, setInitialized] = useState(Kakao.isInitialized());
 
   useEffect(() => {
@@ -31,7 +31,7 @@ export default function KakaoLoginButton({ redirectUri }) {
   function login() {
     Kakao.Auth.authorize({
       redirectUri: redirectUri || getRootURL(),
-      state: "asdf",
+      state,
     });
   }
 
