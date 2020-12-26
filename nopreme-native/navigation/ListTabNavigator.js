@@ -35,6 +35,7 @@ export default function ListTabNavigator({ types, tabComponent }) {
 
   return (
     <Tab.Navigator
+      backBehavior="none"
       tabBarOptions={{
         activeTintColor: "white",
         inactiveTintColor: "rgba(0,0,0,0.5)",

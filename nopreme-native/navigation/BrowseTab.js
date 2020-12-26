@@ -1,4 +1,5 @@
 import React, { useContext } from "react";
+import { Platform } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 
 import { LanguageContext } from "../contexts/LanguageContext";
@@ -14,7 +15,7 @@ export default function BrowseTab() {
   const langCtx = useContext(LanguageContext);
 
   return (
-    <Stack.Navigator headerMode="float">
+    <Stack.Navigator headerMode={Platform.OS === "ios" ? "float" : "screen"}>
       <Stack.Screen
         name="BrowseHome"
         component={BrowseHome}

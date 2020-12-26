@@ -7,6 +7,7 @@ const Stack = createStackNavigator();
 
 export default function ItemPickerNavigator() {
   return (
+    // TODO: Change header button padding for Android
     <Stack.Navigator
       screenOptions={{
         headerShown: true,

@@ -1,15 +1,18 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import { getRootURL, moveTo, parseQuery } from "../utils/location";
 
 export default function GetToken({ router, match }) {
   const { code, redirectUri } = parseQuery(match);
 
+  const [redirect, setRedirect] = useState();
+
   useEffect(async () => {
     if (code && redirectUri) {
       const form = new URLSearchParams();
       form.append("code", code);
       form.append("redirectUri", getRootURL());
+
       const resp = await fetch("/oauth", {
         method: "POST",
         body: form,
@@ -18,10 +21,14 @@ export default function GetToken({ router, match }) {
       if (resp.ok) {
         const { token } = await resp.json();
 
-        const finalUri = new URL(redirectUri);
-        finalUri.searchParams.append("token", token);
+        if (token) {
+          const finalUri = new URL(redirectUri);
+          finalUri.searchParams.append("token", token);
 
-        return moveTo(finalUri);
+          setRedirect(finalUri.href);
+
+          return moveTo(finalUri.href);
+        }
       }
       // TODO: Handle error
     } else {
@@ -31,5 +38,8 @@ export default function GetToken({ router, match }) {
     }
   }, []);
 
-  return "Getting token...";
+  // TODO: Style
+  return (
+    <div>{(redirect && <a href={redirect}>done</a>) || "Getting token..."}</div>
+  );
 }

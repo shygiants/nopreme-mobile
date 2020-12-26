@@ -1,4 +1,5 @@
-import * as React from "react";
+import React from "react";
+import { Platform } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 
 import ProfileHome from "../screens/ProfileHome";
@@ -9,7 +10,7 @@ const Stack = createStackNavigator();
 
 export default function ProfileTab() {
   return (
-    <Stack.Navigator headerMode="float">
+    <Stack.Navigator headerMode={Platform.OS === "ios" ? "float" : "screen"}>
       <Stack.Screen
         name="ProfileHome"
         component={ProfileHome}
