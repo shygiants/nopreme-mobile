@@ -71,7 +71,7 @@ function ItemPicker({ navigation, route, viewer }) {
             disabled={!forwardable()}
             name={pickWish() ? "md-arrow-forward" : "md-checkmark"}
             style={{ color: tintColor }}
-            onPress={async () => {
+            onPress={() => {
               if (pickWish()) {
                 navigation.push("PickPosession", {
                   goodsId: goods.goodsId,
@@ -80,11 +80,20 @@ function ItemPicker({ navigation, route, viewer }) {
                   intent: route.params.intent,
                 });
               } else {
-                navigation.navigate("GoodsDetail", {
-                  goodsId: goods.goodsId,
-                  wishes: route.params.wishes,
-                  posessions: selected,
-                  intent: route.params.intent,
+                const state = navigation
+                  .dangerouslyGetParent()
+                  .dangerouslyGetState();
+                const tabState = state.routes[0].state;
+                const tabName = tabState.routeNames[tabState.index];
+
+                navigation.navigate(tabName, {
+                  screen: "GoodsDetail",
+                  params: {
+                    goodsId: goods.goodsId,
+                    wishes: route.params.wishes,
+                    posessions: selected,
+                    intent: route.params.intent,
+                  },
                 });
               }
             }}

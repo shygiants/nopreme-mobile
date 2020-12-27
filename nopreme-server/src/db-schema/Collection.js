@@ -5,6 +5,7 @@ const ObjectId = mongoose.Types.ObjectId;
 import { getWishByIds } from "./Wish";
 import { getItems } from "./Item";
 import { getPosessionNumByIds } from "./Posession";
+import { buildSort } from "../utils/db";
 
 const collectionSchema = new mongoose.Schema({
   goods: {
@@ -57,7 +58,10 @@ export async function addCollection({ goods, user }) {
 
 export async function getCollections(
   { userId },
-  sort = { sortBy: "", order: 1 }
+  sort = [
+    { sortBy: "goods.event.date", order: -1 },
+    { sortBy: "name", order: 1 },
+  ]
 ) {
   // TODO: Sort by various criterion
 
@@ -76,6 +80,21 @@ export async function getCollections(
       goods: "$_id",
       user: 1,
     })
+    .lookup({
+      from: "goods",
+      localField: "goods",
+      foreignField: "_id",
+      as: "goods",
+    })
+    .unwind("goods")
+    .lookup({
+      from: "events",
+      localField: "goods.event",
+      foreignField: "_id",
+      as: "goods.event",
+    })
+    .unwind("goods.event")
+    .sort(buildSort(sort))
     .exec();
 }
 

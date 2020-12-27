@@ -14,13 +14,19 @@ import { getWishesByCollectionId } from "../../db-schema/Wish";
 import { getPosessionsByCollectionId } from "../../db-schema/Posession";
 import { getItems } from "../../db-schema/Item";
 import { getFulfilled } from "../../db-schema/Collection";
+import { isObjectId } from "../../utils/db";
 
 const SEPARATOR = "-";
 
 export default {
-  id: globalIdField("Collection", (collection) =>
-    [collection.goods, collection.user].join(SEPARATOR)
-  ),
+  id: globalIdField("Collection", (collection) => {
+    return [
+      isObjectId(collection.goods) || typeof collection.goods === "string"
+        ? collection.goods
+        : collection.goods._id,
+      collection.user,
+    ].join(SEPARATOR);
+  }),
   collecting: {
     type: new GraphQLNonNull(GraphQLBoolean),
     resolve: (collection) =>
@@ -28,17 +34,22 @@ export default {
   },
   fulfilled: {
     type: GraphQLFloat,
-    resolve: async (collection, args) => {
+    resolve: async (collection) => {
       return await getFulfilled({
-        goodsId: collection.goods,
+        goodsId: isObjectId(collection.goods)
+          ? collection.goods
+          : collection.goods._id,
         userId: collection.user,
       });
     },
   },
   goods: {
     type: new GraphQLNonNull(GraphQLGoods),
-    resolve: async (collection) =>
-      await getGoodsById({ _id: collection.goods }),
+    resolve: async (collection) => {
+      return isObjectId(collection.goods)
+        ? await getGoodsById({ _id: collection.goods })
+        : collection.goods;
+    },
   },
   user: {
     type: new GraphQLNonNull(GraphQLUser),

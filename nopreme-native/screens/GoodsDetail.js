@@ -57,7 +57,7 @@ function GoodsDetail({ relay, navigation, route, viewer }) {
   }
 
   function pickItems(intent) {
-    navigation.navigate("ItemPicker", {
+    navigation.push("ItemPicker", {
       screen: "PickWish",
       params: {
         goodsId: goods.goodsId,
@@ -76,6 +76,7 @@ function GoodsDetail({ relay, navigation, route, viewer }) {
       parent = parent.dangerouslyGetParent();
     } while (parent !== undefined);
 
+    // TODO: Refetch more
     const inc = ["ProfileHome", "EventDetail"];
 
     function getScreens(root) {

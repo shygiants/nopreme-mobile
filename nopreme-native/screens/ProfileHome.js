@@ -3,11 +3,11 @@ import {
   View,
   Text,
   SafeAreaView,
-  ScrollView,
   StyleSheet,
-  RefreshControl,
+  SectionList,
 } from "react-native";
 import { graphql, createRefetchContainer } from "react-relay";
+import { LinearGradient } from "expo-linear-gradient";
 
 import { createQueryRenderer } from "../relay";
 import { LanguageContext } from "../contexts/LanguageContext";
@@ -15,6 +15,8 @@ import Stack from "../components/Stack";
 import Tabs from "../components/Tabs";
 import HeaderButton from "../components/HeaderButton";
 import GoodsListItem from "../containers/GoodsListItem";
+import OptionModal from "../components/OptionModal";
+import SortButton from "../components/SortButton";
 
 const styles = StyleSheet.create({
   scroll: { height: "100%", width: "100%" },
@@ -28,6 +30,13 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
   },
+  section: {
+    paddingVertical: 8,
+  },
+  sectionText: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
 });
 
 function Profile({ name }) {
@@ -39,10 +48,26 @@ function Profile({ name }) {
   );
 }
 
+function gap({ width, height }) {
+  return () => <View style={{ width, height }} />;
+}
+
+function SectionHeader({ title }) {
+  return (
+    <LinearGradient
+      colors={["rgba(255,255,255,0.8)", "rgba(255,255,255,0)"]}
+      style={styles.section}
+    >
+      <Text style={styles.sectionText}>{title}</Text>
+    </LinearGradient>
+  );
+}
+
 function ProfileHome({ navigation, route, relay, viewer }) {
   const langCtx = useContext(LanguageContext);
   const [tabIdx, setTabIdx] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
   const { collections } = viewer;
 
   function refresh(cb) {
@@ -71,15 +96,14 @@ function ProfileHome({ navigation, route, relay, viewer }) {
     }
   }, [route.params]);
 
-  function collToElem({
-    node: {
+  function collToElem(item) {
+    const {
       fulfilled,
       goods: { goodsId, name, img, type, numItems },
-    },
-  }) {
+    } = item;
+
     return (
       <GoodsListItem
-        key={goodsId}
         name={name}
         img={img.src}
         type={type}
@@ -95,48 +119,93 @@ function ProfileHome({ navigation, route, relay, viewer }) {
     );
   }
 
-  const collectingGoods = collections.edges
-    .filter(({ node: { fulfilled } }) => fulfilled < 1)
-    .map(collToElem);
-  const collectedGoods = collections.edges
-    .filter(({ node: { fulfilled } }) => fulfilled === 1)
-    .map(collToElem);
+  function edgesToSections(edges) {
+    const sections = [];
+    edges.forEach(({ node }) => {
+      const {
+        goods: {
+          event: { eventId, name },
+        },
+      } = node;
 
-  function getTabContent() {
+      const found = sections.find((event) => event.eventId === eventId);
+
+      if (found) {
+        found.data.push(node);
+      } else {
+        sections.push({ eventId, name, data: [node] });
+      }
+    });
+    return sections;
+  }
+
+  const collectingGoods = collections.edges.filter(
+    ({ node: { fulfilled } }) => fulfilled < 1
+  );
+  const collectedGoods = collections.edges.filter(
+    ({ node: { fulfilled } }) => fulfilled === 1
+  );
+
+  function getTabSections() {
     switch (tabIdx) {
       case 0:
-        return collectingGoods;
+        return edgesToSections(collectingGoods);
       case 1:
-        return collectedGoods;
+        return edgesToSections(collectedGoods);
     }
   }
 
   return (
     <SafeAreaView style={{ backgroundColor: "white" }}>
-      <ScrollView
-        style={styles.scroll}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={refresh} />
-        }
-      >
-        <Stack
-          style={{
-            gap: 10,
-            padding: 16,
-          }}
-        >
-          <Profile name={viewer.viewer.name} />
-          <Tabs
-            tabTitles={[
-              `${langCtx.dictionary.collecting} ${collectingGoods.length}`,
-              `${langCtx.dictionary.collected} ${collectedGoods.length}`,
-            ]}
-            tabIdx={tabIdx}
-            onTabChange={setTabIdx}
-          />
-          <Stack style={{ gap: 10 }}>{getTabContent()}</Stack>
-        </Stack>
-      </ScrollView>
+      <OptionModal
+        visible={modalVisible}
+        onDismiss={() => setModalVisible(false)}
+        options={[
+          {
+            title: langCtx.dictionary.latestEvent,
+            onSelect: () => console.log("sort"),
+          },
+        ]}
+      />
+      <SectionList
+        sections={getTabSections()}
+        keyExtractor={({ goods: { goodsId } }) => goodsId}
+        renderSectionHeader={({ section: { name } }) => (
+          <SectionHeader title={name} />
+        )}
+        renderItem={({ item }) => collToElem(item)}
+        style={{ paddingHorizontal: 16 }}
+        ListHeaderComponent={() => (
+          <Stack
+            style={{
+              paddingTop: 16,
+              gap: 10,
+            }}
+          >
+            <Profile name={viewer.viewer.name} />
+            <Tabs
+              tabTitles={[
+                `${langCtx.dictionary.collecting} ${collectingGoods.length}`,
+                `${langCtx.dictionary.collected} ${collectedGoods.length}`,
+              ]}
+              tabIdx={tabIdx}
+              onTabChange={setTabIdx}
+            />
+            <SortButton
+              title={langCtx.dictionary.latestEvent}
+              onPress={() => setModalVisible(true)}
+            />
+          </Stack>
+        )}
+        ListFooterComponent={gap({ height: 16 })}
+        SectionSeparatorComponent={({ leadingItem }) => (
+          <View style={{ height: leadingItem ? 24 : 0 }} />
+        )}
+        ItemSeparatorComponent={gap({ height: 10 })}
+        ListEmptyComponent={() => <Text>EMPTY</Text>}
+        refreshing={refreshing}
+        onRefresh={refresh}
+      />
     </SafeAreaView>
   );
 }
@@ -167,6 +236,11 @@ const FragmentContainer = createRefetchContainer(
                 img {
                   id
                   src
+                }
+                event {
+                  id
+                  eventId
+                  name
                 }
                 type
                 numItems
