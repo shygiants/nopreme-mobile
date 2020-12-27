@@ -1,6 +1,6 @@
 import React from "react";
 import { QueryRenderer } from "react-relay";
-import { Text } from "react-native";
+import { Text, SafeAreaView, ActivityIndicator } from "react-native";
 
 import { environment } from "./environment";
 // import { environment } from "./environment-naive";
@@ -22,8 +22,13 @@ export function createQueryRenderer(
             return <Text>Error on QueryRenderer!</Text>;
           }
           if (!props) {
-            // TODO: action indicator
-            return <Text>Processing...</Text>;
+            return (
+              <SafeAreaView
+                style={{ height: "100%", justifyContent: "center" }}
+              >
+                <ActivityIndicator size="large" />
+              </SafeAreaView>
+            );
           }
 
           return <RootFragmentComponent route={route} {...rest} {...props} />;
