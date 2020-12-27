@@ -58,7 +58,7 @@ export default function WishIndicator({ children, numWishes, fulfilled }) {
     <View>
       {children}
 
-      {fulfilled < numWishes && (
+      {fulfilled === 0 && (
         <View style={styles.container}>
           <View style={styles.blur} />
         </View>

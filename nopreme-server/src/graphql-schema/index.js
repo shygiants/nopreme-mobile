@@ -1,6 +1,16 @@
-import { GraphQLSchema, GraphQLObjectType } from "graphql";
+import {
+  GraphQLSchema,
+  GraphQLObjectType,
+  GraphQLNonNull,
+  GraphQLID,
+} from "graphql";
 
-import { nodeField, GraphQLViewer, GraphQLAdmin } from "./nodes";
+import {
+  nodeField,
+  GraphQLViewer,
+  GraphQLAdmin,
+  GraphQLProfile,
+} from "./nodes";
 
 import { AddGroupMutation } from "./mutations/AddGroupMutation";
 import { ModifyGroupMutation } from "./mutations/ModifyGroupMutation";
@@ -30,6 +40,15 @@ const Query = new GraphQLObjectType({
     admin: {
       type: GraphQLAdmin,
       resolve: () => ({}),
+    },
+    profile: {
+      type: GraphQLProfile,
+      args: {
+        userId: {
+          type: new GraphQLNonNull(GraphQLID),
+        },
+      },
+      resolve: (root, { userId }) => ({ userId }),
     },
     node: nodeField,
   },

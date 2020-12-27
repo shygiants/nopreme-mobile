@@ -1,0 +1,199 @@
+type Query {
+  profile(userId: ID!): Profile
+
+  """Fetches an object given its ID"""
+  node(
+    """The ID of an object"""
+    id: ID!
+  ): Node
+}
+
+type Profile implements Node {
+  """The ID of an object"""
+  id: ID!
+  user: User!
+  collections(after: String, first: Int, before: String, last: Int): CollectionConnection!
+  goods(goodsId: ID!): Goods!
+  items(goodsId: ID!, after: String, first: Int, before: String, last: Int): ItemConnection!
+  collection(goodsId: ID!): Collection!
+}
+
+"""An object with an ID"""
+interface Node {
+  """The id of the object."""
+  id: ID!
+}
+
+type User implements Node {
+  """The ID of an object"""
+  id: ID!
+  userId: ID!
+  name: String!
+}
+
+"""A connection to a list of items."""
+type CollectionConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [CollectionEdge]
+}
+
+"""Information about pagination in a connection."""
+type PageInfo {
+  """When paginating forwards, are there more items?"""
+  hasNextPage: Boolean!
+
+  """When paginating backwards, are there more items?"""
+  hasPreviousPage: Boolean!
+
+  """When paginating backwards, the cursor to continue."""
+  startCursor: String
+
+  """When paginating forwards, the cursor to continue."""
+  endCursor: String
+}
+
+"""An edge in a connection."""
+type CollectionEdge {
+  """The item at the end of the edge"""
+  node: Collection
+
+  """A cursor for use in pagination"""
+  cursor: String!
+}
+
+type Collection implements Node {
+  """The ID of an object"""
+  id: ID!
+  collecting: Boolean!
+  fulfilled: Float
+  goods: Goods!
+  user: User!
+  wishes(after: String, first: Int, before: String, last: Int): WishConnection!
+  posessions(after: String, first: Int, before: String, last: Int): PosessionConnection!
+}
+
+type Goods implements Node {
+  """The ID of an object"""
+  id: ID!
+  goodsId: ID!
+  name: String!
+  type: String!
+  img: Image
+  width: Int
+  height: Int
+  event: Event
+  numItems: Int
+  collecting: Boolean
+  fulfilled: Float
+}
+
+type Image implements Node {
+  """The ID of an object"""
+  id: ID!
+  imageId: ID!
+  src: String!
+}
+
+type Event implements Node {
+  """The ID of an object"""
+  id: ID!
+  eventId: ID!
+  img: Image
+  name: String!
+  date: String!
+  type: String!
+  numGoods(artistName: String!): Int
+}
+
+"""A connection to a list of items."""
+type WishConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [WishEdge]
+}
+
+"""An edge in a connection."""
+type WishEdge {
+  """The item at the end of the edge"""
+  node: Wish
+
+  """A cursor for use in pagination"""
+  cursor: String!
+}
+
+type Wish implements Node {
+  """The ID of an object"""
+  id: ID!
+  item: Item!
+  user: User!
+  num: Int!
+  fulfilled: Int!
+}
+
+type Item implements Node {
+  """The ID of an object"""
+  id: ID!
+  itemId: ID!
+  idx: Int!
+  artist: [Artist]!
+  img: Image
+}
+
+type Artist implements Node {
+  """The ID of an object"""
+  id: ID!
+  artistId: ID!
+  img: Image
+  name: String!
+  birthday: String!
+}
+
+"""A connection to a list of items."""
+type PosessionConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [PosessionEdge]
+}
+
+"""An edge in a connection."""
+type PosessionEdge {
+  """The item at the end of the edge"""
+  node: Posession
+
+  """A cursor for use in pagination"""
+  cursor: String!
+}
+
+type Posession implements Node {
+  """The ID of an object"""
+  id: ID!
+  item: Item!
+  user: User!
+  num: Int!
+  wished: Int!
+}
+
+"""A connection to a list of items."""
+type ItemConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [ItemEdge]
+}
+
+"""An edge in a connection."""
+type ItemEdge {
+  """The item at the end of the edge"""
+  node: Item
+
+  """A cursor for use in pagination"""
+  cursor: String!
+}

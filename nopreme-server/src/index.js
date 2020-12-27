@@ -15,6 +15,7 @@ import { v4 as uuidv4 } from "uuid";
 import { Storage } from "@google-cloud/storage";
 
 import { schema } from "./graphql-schema";
+import { schema as publicSchema } from "./graphql-schema/public";
 import { getToken, getUserInfo } from "./utils/kakao";
 import { getInitialRandomName } from "./utils/random";
 import {
@@ -58,6 +59,13 @@ app.use(
   decodeJWT,
   graphqlHTTP({
     schema: schema,
+  })
+);
+
+app.use(
+  "/publicGraphql",
+  graphqlHTTP({
+    schema: publicSchema,
   })
 );
 

@@ -28,8 +28,11 @@ export default {
   },
   fulfilled: {
     type: GraphQLFloat,
-    resolve: async (collection, args, { user: { id } }) => {
-      return await getFulfilled({ goodsId: collection.goods, userId: id });
+    resolve: async (collection, args) => {
+      return await getFulfilled({
+        goodsId: collection.goods,
+        userId: collection.user,
+      });
     },
   },
   goods: {

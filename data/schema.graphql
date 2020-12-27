@@ -1,6 +1,7 @@
 type Query {
   viewer: Viewer
   admin: Admin
+  profile(userId: ID!): Profile
 
   """Fetches an object given its ID"""
   node(
@@ -265,6 +266,16 @@ type ArtistEdge {
 
   """A cursor for use in pagination"""
   cursor: String!
+}
+
+type Profile implements Node {
+  """The ID of an object"""
+  id: ID!
+  user: User!
+  collections(after: String, first: Int, before: String, last: Int): CollectionConnection!
+  goods(goodsId: ID!): Goods!
+  items(goodsId: ID!, after: String, first: Int, before: String, last: Int): ItemConnection!
+  collection(goodsId: ID!): Collection!
 }
 
 type Mutation {

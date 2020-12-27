@@ -74,6 +74,8 @@ export const { nodeInterface, nodeField } = nodeDefinitions(
         return new Admin();
       case "Viewer":
         return new Viewer();
+      case "Profile":
+        return new Profile({ userId: id });
       default:
         throw "no supported type";
     }
@@ -91,6 +93,7 @@ export const { nodeInterface, nodeField } = nodeDefinitions(
     else if (obj instanceof Collection) return GraphQLCollection;
     else if (obj instanceof Wish) return GraphQLWish;
     else if (obj instanceof Posession) return GraphQLPosession;
+    else if (obj instanceof Profile) return GraphQLProfile;
     else throw "no supported type";
   }
 );
@@ -473,6 +476,88 @@ export const GraphQLViewer = new GraphQLObjectType({
           first,
           last,
         });
+      },
+    },
+  },
+  interfaces: [nodeInterface],
+});
+
+class Profile {
+  constructor({ userId }) {
+    this.userId = userId;
+  }
+}
+
+export const GraphQLProfile = new GraphQLObjectType({
+  name: "Profile",
+  fields: {
+    id: globalIdField("Profile", (profile) => profile.userId),
+    user: {
+      type: new GraphQLNonNull(GraphQLUser),
+      resolve: async (profile) => await getUserById({ _id: profile.userId }),
+    },
+    collections: {
+      type: new GraphQLNonNull(CollectionConnection),
+      args: connectionArgs,
+      resolve: async (root, { after, before, first, last }) => {
+        const collections = await getCollections({ userId: root.userId });
+
+        return connectionFromArray([...collections], {
+          after,
+          before,
+          first,
+          last,
+        });
+      },
+    },
+    goods: {
+      type: new GraphQLNonNull(GraphQLGoods),
+      args: {
+        goodsId: {
+          type: new GraphQLNonNull(GraphQLID),
+        },
+      },
+      resolve: async (root, { goodsId }) => {
+        return await getGoodsById({ _id: goodsId });
+      },
+    },
+    items: {
+      type: new GraphQLNonNull(ItemConnection),
+      args: {
+        goodsId: {
+          type: new GraphQLNonNull(GraphQLID),
+        },
+        ...connectionArgs,
+      },
+      resolve: async (root, { goodsId, after, before, first, last }) => {
+        const items = await getItems({
+          goodsId,
+        });
+
+        return connectionFromArray([...items], {
+          after,
+          before,
+          first,
+          last,
+        });
+      },
+    },
+    collection: {
+      type: new GraphQLNonNull(GraphQLCollection),
+      args: {
+        goodsId: {
+          type: new GraphQLNonNull(GraphQLID),
+        },
+      },
+      resolve: async (profile, { goodsId }) => {
+        const collection = await getCollectionByIds({
+          goodsId,
+          userId: profile.userId,
+        });
+
+        return collection && collection.intent
+          ? collection
+          : { goods: goodsId, user: profile.userId };
       },
     },
   },
