@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 const Container = styled.div`
   display: flex;
-  flex-direction: ${({ flexDirection }) => flexDirection};
+  flex-direction: ${({ direction }) => direction};
   ${({ extStyle }) => extStyle}
 `;
 const Gap = styled.div`
@@ -11,7 +11,7 @@ const Gap = styled.div`
   height: ${({ gap }) => gap}pt;
 `;
 
-export default function Stack({ children, gap, flexDirection, extStyle }) {
+export default function Stack({ children, gap, direction, extStyle, onClick }) {
   let contents = children;
 
   if (gap) {
@@ -26,7 +26,11 @@ export default function Stack({ children, gap, flexDirection, extStyle }) {
   }
 
   return (
-    <Container extStyle={extStyle} flexDirection={flexDirection ?? "column"}>
+    <Container
+      extStyle={extStyle}
+      direction={direction ?? "column"}
+      onClick={onClick}
+    >
       {contents}
     </Container>
   );

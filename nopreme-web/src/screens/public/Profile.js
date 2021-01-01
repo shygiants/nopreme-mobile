@@ -57,7 +57,7 @@ function Profile({ router, match, profile }) {
       <Padded>
         <Stack gap={16}>
           <Stack
-            flexDirection="row"
+            direction="row"
             gap={10}
             extStyle={css`
               align-items: center;
@@ -69,7 +69,7 @@ function Profile({ router, match, profile }) {
           {collections.edges.map(({ node: { fulfilled, goods } }) => (
             <Stack
               key={goods.goodsId}
-              flexDirection="row"
+              direction="row"
               gap={10}
               extStyle={css`
                 align-items: center;
