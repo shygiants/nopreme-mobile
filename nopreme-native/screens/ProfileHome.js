@@ -156,7 +156,7 @@ function ProfileHome({ navigation, route, relay, viewer }) {
   }
 
   return (
-    <SafeAreaView style={{ backgroundColor: "white" }}>
+    <SafeAreaView style={{ backgroundColor: "white", height: "100%" }}>
       <OptionModal
         visible={modalVisible}
         onDismiss={() => setModalVisible(false)}

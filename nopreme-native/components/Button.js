@@ -14,10 +14,13 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function Button({ onPress, children }) {
+export default function Button({ onPress, style, textStyle, children }) {
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress}>
-      <Text style={styles.text}>{children}</Text>
+    <TouchableOpacity
+      style={StyleSheet.compose(styles.container, style)}
+      onPress={onPress}
+    >
+      <Text style={StyleSheet.compose(styles.text, textStyle)}>{children}</Text>
     </TouchableOpacity>
   );
 }

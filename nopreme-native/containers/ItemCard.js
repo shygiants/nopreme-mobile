@@ -1,20 +1,22 @@
 import React from "react";
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { StyleSheet, View, useWindowDimensions } from "react-native";
 
 import Image from "../components/Image";
 
 const styles = StyleSheet.create({
   image: {
-    width: 109,
     borderRadius: 12,
   },
 });
 
 export default function ItemCard({ img, aspectRatio }) {
+  const window = useWindowDimensions();
+  const width = (window.width - 16 * 4) / 3;
   return (
     <Image
       style={StyleSheet.compose(styles.image, {
-        height: styles.image.width / (aspectRatio || 1),
+        width,
+        height: width / (aspectRatio || 1),
       })}
       src={img}
     />
@@ -22,5 +24,13 @@ export default function ItemCard({ img, aspectRatio }) {
 }
 
 export function Padding() {
-  return <View style={styles.image} />;
+  const window = useWindowDimensions();
+  const width = (window.width - 16 * 4) / 3;
+  return (
+    <View
+      style={StyleSheet.compose(styles.image, {
+        width,
+      })}
+    />
+  );
 }

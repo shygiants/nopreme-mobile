@@ -12,6 +12,7 @@ import { LinearGradient } from "expo-linear-gradient";
 
 import Image from "../components/Image";
 import HeaderButton from "../components/HeaderButton";
+import Button from "../components/Button";
 
 const BORDER_RADIUS = 40;
 
@@ -45,6 +46,9 @@ export default function ImgBGScroll({
   onOptionPress,
   refreshing,
   onRefresh,
+  enableFloatingActionButton,
+  FABTitle,
+  onFABPressed,
 }) {
   // TODO: Animation
   const [imgShown, setImgShown] = useState(true);
@@ -108,6 +112,7 @@ export default function ImgBGScroll({
         style={StyleSheet.compose(styles.image, { aspectRatio })}
         src={imgSrc}
       />
+
       <ScrollView
         style={styles.scroll}
         scrollEventThrottle={16}
@@ -152,6 +157,23 @@ export default function ImgBGScroll({
           </View>
         </View>
       </ScrollView>
+
+      {enableFloatingActionButton && (
+        <Button
+          style={{
+            position: "absolute",
+            right: 16,
+            bottom: 16,
+            paddingVertical: 10,
+            paddingHorizontal: 20,
+            borderRadius: 20,
+          }}
+          textStyle={{ fontSize: 20, fontWeight: "bold" }}
+          onPress={onFABPressed}
+        >
+          {FABTitle}
+        </Button>
+      )}
     </View>
   );
 }

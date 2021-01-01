@@ -189,6 +189,9 @@ function GoodsDetail({ relay, navigation, route, viewer }) {
       imgSrc={goods.img.src}
       headerTitle={goods.name}
       onOptionPress={() => setModalVisible(true)}
+      enableFloatingActionButton={collection.collecting}
+      FABTitle="교환"
+      onFABPressed={() => console.log("exchange")}
     >
       <OptionModal
         visible={modalVisible}
