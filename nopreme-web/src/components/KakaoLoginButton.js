@@ -38,14 +38,12 @@ export default function KakaoLoginButton({ redirectUri, state }) {
   if (initialized) {
     return (
       <Button primary color="yellow" textColor="black" onClick={login}>
-        {langCtx.dictionary["kakaoLoginButtonText"]}
+        {langCtx.dictionary.kakaoLoginButtonText}
       </Button>
     );
   } else {
     return (
-      <Button disabled>
-        {langCtx.dictionary["kakaoLoginInitializingText"]}
-      </Button>
+      <Button disabled>{langCtx.dictionary.kakaoLoginInitializingText}</Button>
     );
   }
 }

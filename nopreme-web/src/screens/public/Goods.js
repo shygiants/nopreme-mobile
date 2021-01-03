@@ -5,7 +5,8 @@ import { graphql, createFragmentContainer } from "react-relay";
 import Stack from "../../components/Stack";
 import Grid from "../../components/Grid";
 import Badge from "../../components/Badge";
-import ProgressBar from "../../components/ProgressBar";
+import ItemCard from "../../containers/ItemCard";
+import { getGoodsName } from "../../utils/enum";
 
 const Window = styled.div`
   display: flex;
@@ -28,51 +29,59 @@ const BGImage = styled.img`
 `;
 
 const ImgPlaceHolder = styled.div`
-  height: calc(100vw - 40pt);
+  height: calc(100vw - 40px);
 `;
 
 const Container = styled.div`
   background-color: white;
-  border-radius: 40pt;
-  padding: 16pt;
-  padding-top: 40pt;
+  border-radius: 40px;
+  padding: 16px;
+  padding-top: 40px;
 `;
 
 const Text = styled.div`
-  font-size: 24pt;
+  font-size: 24px;
   font-weight: bold;
 `;
 
 const SubText = styled.div`
-  font-size: 20pt;
+  font-size: 20px;
   color: #555555;
 `;
 
 const Circle = styled.div`
-  width: 50pt;
-  height: 50pt;
-  border-radius: 25pt;
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
   background-color: gray;
 `;
 
 const ItemImg = styled.img`
-  border-radius: 12pt;
+  border-radius: 12px;
   filter: brightness(95%);
-  width: calc((100vw - (16pt * 4)) / 3);
+  width: calc((100vw - (16px * 4)) / 3);
   height: calc(
-    ((100vw - (16pt * 4)) / 3) / ${({ aspectRatio }) => aspectRatio ?? 1}
+    ((100vw - (16px * 4)) / 3) / ${({ aspectRatio }) => aspectRatio ?? 1}
   );
 `;
 
 const ItemImgPadding = styled.div`
-  width: calc((100vw - (16pt * 4)) / 3);
+  width: calc((100vw - (16px * 4)) / 3);
   height: calc(
-    ((100vw - (16pt * 4)) / 3) / ${({ aspectRatio }) => aspectRatio ?? 1}
+    ((100vw - (16px * 4)) / 3) / ${({ aspectRatio }) => aspectRatio ?? 1}
   );
 `;
 
 function Goods({ profile }) {
-  const { goods, user, collection } = profile;
+  const { goods, user, collection, items } = profile;
+
+  const status = items.edges.map(({ node }, idx) => {
+    const item = node;
+    const wish = collection.wishes.edges[idx].node;
+    const posession = collection.posessions.edges[idx].node;
+
+    return { item, wished: wish.num, posessed: posession.num };
+  });
 
   const aspectRatio = goods.width / goods.height;
 
@@ -83,7 +92,7 @@ function Goods({ profile }) {
         <ImgPlaceHolder />
         <Container>
           <Stack gap={10}>
-            <Badge text={goods.type} />
+            <Badge text={getGoodsName(goods.type)} />
             <Text>{goods.name}</Text>
             <SubText>{goods.event.name}</SubText>
             <Stack
@@ -97,11 +106,13 @@ function Goods({ profile }) {
               <Text style={{ fontSize: 20 }}>{user.name}</Text>
             </Stack>
             <Grid gap={16} numCross={3} padding={ItemImgPadding}>
-              {collection.wishes.edges.map(({ node: { item } }) => (
-                <ItemImg
+              {status.map(({ item, wished, posessed }) => (
+                <ItemCard
                   key={item.itemId}
-                  src={item.img.src}
+                  img={item.img}
                   aspectRatio={aspectRatio}
+                  wished={wished}
+                  posessed={posessed}
                 />
               ))}
             </Grid>

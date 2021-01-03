@@ -1,4 +1,7 @@
 {
   "kakaoLoginButtonText": "Kakao Login",
-  "kakaoLoginInitializingText": "Initializing Kakao Login..."
+  "kakaoLoginInitializingText": "Initializing Kakao Login...",
+  "wish": "Wish",
+  "posession": "Have",
+  "collected": "Collected"
 }

@@ -1,4 +1,7 @@
 {
   "kakaoLoginButtonText": "カカオでログイン",
-  "kakaoLoginInitializingText": "カカオログイン初期化中..."
+  "kakaoLoginInitializingText": "カカオログイン初期化中...",
+  "wish": "求め",
+  "posession": "持つ",
+  "collected": "収集完了"
 }

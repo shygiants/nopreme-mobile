@@ -7,8 +7,8 @@ const Container = styled.div`
   ${({ extStyle }) => extStyle}
 `;
 const Gap = styled.div`
-  width: ${({ gap }) => gap}pt;
-  height: ${({ gap }) => gap}pt;
+  width: ${({ gap }) => gap}px;
+  height: ${({ gap }) => gap}px;
 `;
 
 export default function Stack({ children, gap, direction, extStyle, onClick }) {
@@ -16,13 +16,16 @@ export default function Stack({ children, gap, direction, extStyle, onClick }) {
 
   if (gap) {
     contents = [];
-    children.flat().forEach((child, idx) => {
-      if (idx !== 0 && child !== true) {
-        contents.push(<Gap key={`gap-${idx}`} gap={gap} />);
-      }
+    children
+      .flat()
+      .filter((child) => typeof child !== "boolean")
+      .forEach((child, idx) => {
+        if (idx !== 0) {
+          contents.push(<Gap key={`gap-${idx}`} gap={gap} />);
+        }
 
-      contents.push(child);
-    });
+        contents.push(child);
+      });
   }
 
   return (

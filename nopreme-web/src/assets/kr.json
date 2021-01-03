@@ -1,4 +1,7 @@
 {
   "kakaoLoginButtonText": "카카오로 로그인하기",
-  "kakaoLoginInitializingText": "카카오 로그인 초기화 중..."
+  "kakaoLoginInitializingText": "카카오 로그인 초기화 중...",
+  "wish": "희망",
+  "posession": "보유",
+  "collected": "수집 완료"
 }
