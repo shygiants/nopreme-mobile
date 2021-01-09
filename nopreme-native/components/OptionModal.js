@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -41,6 +41,7 @@ const styles = StyleSheet.create({
 });
 
 export default function OptionModal({ visible, onDismiss, options }) {
+  const [show, setShow] = useState(visible);
   const insets = useSafeAreaInsets();
 
   const height =
@@ -59,6 +60,7 @@ export default function OptionModal({ visible, onDismiss, options }) {
   };
 
   function fadeIn() {
+    setShow(true);
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 1,
@@ -71,7 +73,7 @@ export default function OptionModal({ visible, onDismiss, options }) {
     ]).start();
   }
 
-  function fadeOut(onComplete) {
+  function fadeOut() {
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 0,
@@ -81,24 +83,22 @@ export default function OptionModal({ visible, onDismiss, options }) {
         toValue: -height,
         ...defaultAnimOpt,
       }),
-    ]).start(() => {
-      onDismiss();
-      if (onComplete) onComplete();
-    });
+    ]).start(() => setShow(false));
   }
 
   useEffect(() => {
     if (visible) fadeIn();
+    else fadeOut();
   }, [visible]);
 
   return (
     <Modal
       animationType="none"
       transparent={true}
-      visible={visible}
-      onRequestClose={() => fadeOut()}
+      visible={show}
+      onRequestClose={onDismiss}
     >
-      <Pressable onPress={() => fadeOut()}>
+      <Pressable onPress={onDismiss}>
         <Animated.View
           style={StyleSheet.compose(styles.background, {
             opacity: fadeAnim,
@@ -115,7 +115,7 @@ export default function OptionModal({ visible, onDismiss, options }) {
           {options.map(({ title, onSelect }, idx) => (
             <TouchableOpacity
               key={`option-${idx}`}
-              onPress={() => fadeOut(onSelect)}
+              onPress={onSelect}
               style={styles.option}
             >
               <Text style={styles.optionText}>{title}</Text>

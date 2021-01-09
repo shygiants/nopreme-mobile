@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, Share } from "react-native";
 import { graphql, createFragmentContainer } from "react-relay";
 
 import { createQueryRenderer } from "../relay";
@@ -173,15 +173,37 @@ function GoodsDetail({ relay, navigation, route, viewer }) {
   const options = [
     {
       title: langCtx.dictionary.reportIncorrect,
-      onSelect: () => console.log("report"),
+      onSelect: () => setModalVisible(false),
     },
   ];
 
-  if (collection.collecting)
+  if (collection.collecting) {
     options.splice(0, 0, {
       title: langCtx.dictionary.updateCollection,
-      onSelect: () => pickItems(INTENTS.UPDATE),
+      onSelect: () => {
+        setModalVisible(false);
+        pickItems(INTENTS.UPDATE);
+      },
     });
+
+    options.splice(0, 0, {
+      title: langCtx.dictionary.shareCollection,
+      onSelect: async () => {
+        // TODO: host as env
+        const host = "http://shybook.local:4000";
+        const userId = viewer.viewer.userId;
+        const goodsId = goods.goodsId;
+        const url = new URL(
+          `/public/#/profile/${userId}/goods/${goodsId}`,
+          host
+        );
+
+        const result = await Share.share({ url: url.href });
+
+        if (result.action === "sharedAction") setModalVisible(false);
+      },
+    });
+  }
 
   return (
     <ImgBGScroll
@@ -246,6 +268,11 @@ const FragmentContainer = createFragmentContainer(GoodsDetail, {
     fragment GoodsDetail_viewer on Viewer
     @argumentDefinitions(goodsId: { type: "ID!" }) {
       id
+      viewer {
+        id
+        userId
+        name
+      }
       goods(goodsId: $goodsId) {
         id
         goodsId
