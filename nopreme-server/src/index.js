@@ -198,6 +198,19 @@ app.post(
   }
 );
 
+app.post("/upload-test", multer.single("file"), async (req, res) => {
+  // TODO: Consistent error msg and handling
+  if (!req.file) return res.status(400).send("No file uploaded.");
+
+  const originalName = req.file.originalname;
+  const ext = path.extname(originalName).toLowerCase();
+
+  console.log(originalName);
+  console.log(req.file.buffer);
+
+  res.json({ originalName, size: req.file.size });
+});
+
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}...`);

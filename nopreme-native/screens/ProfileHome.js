@@ -14,9 +14,10 @@ import { LanguageContext } from "../contexts/LanguageContext";
 import Stack from "../components/Stack";
 import Tabs from "../components/Tabs";
 import HeaderButton from "../components/HeaderButton";
-import GoodsListItem from "../containers/GoodsListItem";
 import OptionModal from "../components/OptionModal";
 import SortButton from "../components/SortButton";
+import Button from "../components/Button";
+import GoodsListItem from "../containers/GoodsListItem";
 
 const styles = StyleSheet.create({
   scroll: { height: "100%", width: "100%" },
@@ -39,11 +40,30 @@ const styles = StyleSheet.create({
   },
 });
 
-function Profile({ name }) {
+function Profile({ name, onProfileEdit }) {
   return (
     <Stack style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
       <View style={styles.circle} />
-      <Text style={styles.profileText}>{name}</Text>
+      <Stack style={{ flexDirection: "column", gap: 10 }}>
+        <Text style={styles.profileText}>{name}</Text>
+        <Button
+          style={{
+            backgroundColor: "transparent",
+            borderColor: "#999999",
+            borderWidth: 1,
+            paddingVertical: 4,
+            paddingHorizontal: 8,
+            alignSelf: "start",
+          }}
+          textStyle={{
+            color: "#999999",
+            fontSize: 14,
+          }}
+          onPress={onProfileEdit}
+        >
+          {"프로필 편집"}
+        </Button>
+      </Stack>
     </Stack>
   );
 }
@@ -182,7 +202,12 @@ function ProfileHome({ navigation, route, relay, viewer }) {
               gap: 10,
             }}
           >
-            <Profile name={viewer.viewer.name} />
+            <Profile
+              name={viewer.viewer.name}
+              onProfileEdit={() => {
+                navigation.push("ProfileEditor");
+              }}
+            />
             <Tabs
               tabTitles={[
                 `${langCtx.dictionary.collecting} ${collectingGoods.length}`,

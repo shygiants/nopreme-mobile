@@ -6,6 +6,7 @@ import {
 
 import BottomTabNavigator from "./BottomTabNavigator";
 import ItemPickerNavigator from "./ItemPickerNavigator";
+import ProfileEditorNavigator from "./ProfileEditorNavigator";
 
 const Modal = createStackNavigator();
 
@@ -16,6 +17,14 @@ export default function RootNavigator({ navigation, route }) {
       <Modal.Screen
         name="ItemPicker"
         component={ItemPickerNavigator}
+        options={{
+          ...TransitionPresets.ModalSlideFromBottomIOS,
+          gestureEnabled: false,
+        }}
+      />
+      <Modal.Screen
+        name="ProfileEditor"
+        component={ProfileEditorNavigator}
         options={{
           ...TransitionPresets.ModalSlideFromBottomIOS,
           gestureEnabled: false,
