@@ -1,4 +1,7 @@
 import mongoose from "mongoose";
+const Schema = mongoose.Schema;
+
+import { buildUpdate } from "../utils/db";
 
 const userSchema = new mongoose.Schema({
   kakaoId: {
@@ -8,6 +11,10 @@ const userSchema = new mongoose.Schema({
   name: {
     type: String,
     index: true,
+  },
+  profile: {
+    type: Schema.Types.ObjectId,
+    ref: "Image",
   },
   createdAt: {
     type: Date,
@@ -64,6 +71,18 @@ export async function addUser({
       issuedAt: Date.now(),
     },
   }).save();
+}
+
+export async function modifyUser({ _id, name, profile }) {
+  const update = { name, profile };
+
+  const modifiedUser = await User.findOneAndUpdate(
+    { _id },
+    buildUpdate(update),
+    { new: true }
+  ).exec();
+
+  return modifiedUser;
 }
 
 export async function isAdmin({ _id }) {

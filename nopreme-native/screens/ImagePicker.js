@@ -236,6 +236,8 @@ function AssetsGridList({ onImageSelect }) {
     setLoading(false);
   }
 
+  // TODO: Replace ScrollView to FlatList
+
   return assets ? (
     <ScrollView
       style={{

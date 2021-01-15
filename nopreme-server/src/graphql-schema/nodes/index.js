@@ -110,6 +110,14 @@ export const GraphQLUser = new GraphQLObjectType({
   interfaces: [nodeInterface],
 });
 
+export const {
+  connectionType: UserConnection,
+  edgeType: GraphQLUserEdge,
+} = connectionDefinitions({
+  name: "User",
+  nodeType: GraphQLUser,
+});
+
 export const GraphQLArtist = new GraphQLObjectType({
   name: "Artist",
   fields: require("./Artist").default,

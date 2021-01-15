@@ -61,9 +61,7 @@ export async function modifyEvent({ _id, name, date, img, type }) {
   const modifiedEvent = await Event.findOneAndUpdate(
     { _id },
     buildUpdate(update),
-    {
-      new: true,
-    }
+    { new: true }
   ).exec();
 
   return modifiedEvent;

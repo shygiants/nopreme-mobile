@@ -29,6 +29,7 @@ import { ModifyItemMutation } from "./mutations/ModifyItemMutation";
 import { RemoveItemMutation } from "./mutations/RemoveItemMutation";
 import { AddCollectionMutation } from "./mutations/AddCollectionMutation";
 import { UpdateCollectionMutation } from "./mutations/UpdateCollectionMutation";
+import { ModifyUserMutation } from "./mutations/ModifyUserMutation";
 
 const Query = new GraphQLObjectType({
   name: "Query",
@@ -74,6 +75,7 @@ const Mutation = new GraphQLObjectType({
     removeItem: RemoveItemMutation,
     addCollection: AddCollectionMutation,
     updateCollection: UpdateCollectionMutation,
+    modifyUser: ModifyUserMutation,
   },
 });
 

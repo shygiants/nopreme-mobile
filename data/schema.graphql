@@ -34,6 +34,14 @@ type User implements Node {
   id: ID!
   userId: ID!
   name: String!
+  profile: Image
+}
+
+type Image implements Node {
+  """The ID of an object"""
+  id: ID!
+  imageId: ID!
+  src: String!
 }
 
 """A connection to a list of items."""
@@ -78,13 +86,6 @@ type Event implements Node {
   date: String!
   type: String!
   numGoods(artistName: String!): Int
-}
-
-type Image implements Node {
-  """The ID of an object"""
-  id: ID!
-  imageId: ID!
-  src: String!
 }
 
 """A connection to a list of items."""
@@ -296,6 +297,7 @@ type Mutation {
   removeItem(input: RemoveItemInput!): RemoveItemPayload
   addCollection(input: AddCollectionInput!): AddCollectionPayload
   updateCollection(input: UpdateCollectionInput!): UpdateCollectionPayload
+  modifyUser(input: ModifyUserInput!): ModifyUserPayload
 }
 
 type AddGroupPayload {
@@ -510,5 +512,25 @@ input UpdateCollectionInput {
   goodsId: ID!
   wishes: [ItemPick]!
   posessions: [ItemPick]!
+  clientMutationId: String
+}
+
+type ModifyUserPayload {
+  userEdge: UserEdge!
+  clientMutationId: String
+}
+
+"""An edge in a connection."""
+type UserEdge {
+  """The item at the end of the edge"""
+  node: User
+
+  """A cursor for use in pagination"""
+  cursor: String!
+}
+
+input ModifyUserInput {
+  name: String
+  profile: ID
   clientMutationId: String
 }

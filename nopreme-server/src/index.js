@@ -35,6 +35,7 @@ mongoose.connect(uri, {
   useUnifiedTopology: true,
   useCreateIndex: true,
   useNewUrlParser: true,
+  useFindAndModify: false,
   user: process.env.DB_USER,
   pass: process.env.DB_PASS,
 });
@@ -198,18 +199,50 @@ app.post(
   }
 );
 
-app.post("/upload-test", multer.single("file"), async (req, res) => {
-  // TODO: Consistent error msg and handling
-  if (!req.file) return res.status(400).send("No file uploaded.");
+app.post(
+  "/user-upload",
+  decodeJWT,
+  multer.single("file"),
+  async ({ user: { id } }, res, next) => {
+    if (!(await getUserById({ _id: id }))) return res.status(401).end();
 
-  const originalName = req.file.originalname;
-  const ext = path.extname(originalName).toLowerCase();
+    next();
+  },
+  async (req, res) => {
+    // TODO: Consistent error msg and handling
+    if (!req.file) return res.status(400).send("No file uploaded.");
 
-  console.log(originalName);
-  console.log(req.file.buffer);
+    const originalName = req.file.originalname;
+    const ext = path.extname(originalName).toLowerCase();
 
-  res.json({ originalName, size: req.file.size });
-});
+    const bucket = storage.bucket(process.env.GCLOUD_STORAGE_BUCKET);
+
+    let exists;
+    let gcpFile;
+    let filename;
+    do {
+      filename = uuidv4() + ext;
+      gcpFile = bucket.file(filename);
+      [exists] = await gcpFile.exists();
+    } while (exists);
+
+    await gcpFile.save(req.file.buffer);
+
+    const addedImage = await addImage({
+      src: `/${bucket.name}/${filename}`,
+      originalName,
+      ext,
+      size: req.file.size,
+      uploader: req.user.id,
+    });
+
+    res.json({
+      ...addedImage,
+      imageId: addedImage._id,
+      src: process.env.GCLOUD_STORAGE_HOST + addedImage.src,
+    });
+  }
+);
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {

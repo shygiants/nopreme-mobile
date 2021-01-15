@@ -32,3 +32,9 @@ export function buildSort(sort) {
 export function isObjectId(idOrObj) {
   return idOrObj instanceof mongoose.Types.ObjectId;
 }
+
+export function compareObjectIds(idA, idB) {
+  const finalIdA = isObjectId(idA) ? idA.toString() : idA;
+  const finalIdB = isObjectId(idB) ? idB.toString() : idB;
+  return finalIdA === finalIdB;
+}

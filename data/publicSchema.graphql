@@ -29,6 +29,14 @@ type User implements Node {
   id: ID!
   userId: ID!
   name: String!
+  profile: Image
+}
+
+type Image implements Node {
+  """The ID of an object"""
+  id: ID!
+  imageId: ID!
+  src: String!
 }
 
 """A connection to a list of items."""
@@ -88,13 +96,6 @@ type Goods implements Node {
   numItems: Int
   collecting: Boolean
   fulfilled: Float
-}
-
-type Image implements Node {
-  """The ID of an object"""
-  id: ID!
-  imageId: ID!
-  src: String!
 }
 
 type Event implements Node {

@@ -17,6 +17,7 @@ import HeaderButton from "../components/HeaderButton";
 import OptionModal from "../components/OptionModal";
 import SortButton from "../components/SortButton";
 import Button from "../components/Button";
+import ProfilePhoto from "../components/ProfilePhoto";
 import GoodsListItem from "../containers/GoodsListItem";
 
 const styles = StyleSheet.create({
@@ -40,10 +41,10 @@ const styles = StyleSheet.create({
   },
 });
 
-function Profile({ name, onProfileEdit }) {
+function Profile({ name, image, onProfileEdit }) {
   return (
     <Stack style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
-      <View style={styles.circle} />
+      <ProfilePhoto img={{ uri: image?.src }} />
       <Stack style={{ flexDirection: "column", gap: 10 }}>
         <Text style={styles.profileText}>{name}</Text>
         <Button
@@ -204,6 +205,7 @@ function ProfileHome({ navigation, route, relay, viewer }) {
           >
             <Profile
               name={viewer.viewer.name}
+              image={viewer.viewer.profile}
               onProfileEdit={() => {
                 navigation.push("ProfileEditor");
               }}
@@ -245,6 +247,11 @@ const FragmentContainer = createRefetchContainer(
           id
           userId
           name
+          profile {
+            id
+            imageId
+            src
+          }
         }
         collections(
           first: 2147483647 # max GraphQLInt

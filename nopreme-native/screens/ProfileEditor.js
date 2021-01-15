@@ -14,62 +14,54 @@ import { graphql, createRefetchContainer } from "react-relay";
 
 import { createQueryRenderer } from "../relay";
 import HeaderButton from "../components/HeaderButton";
-import Icon from "../components/Icon";
+
 import Stack from "../components/Stack";
+import ProfilePhoto from "../components/ProfilePhoto";
+import ModifyUserMutation from "../relay/mutations/ModifyUserMutation";
+import { getToken } from "../utils/token";
 
-const styles = StyleSheet.create({
-  profilePhotoContainer: {
-    width: 100,
-    aspectRatio: 1,
-    borderRadius: 50,
-    alignSelf: "flex-start",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#BBBBBB",
-  },
-  profilePhoto: {
-    width: 100,
-    aspectRatio: 1,
-    borderRadius: 50,
-    position: "absolute",
-  },
-  editProfilePhotoBadge: {
-    width: 30,
-    aspectRatio: 1,
-    borderRadius: 15,
-    position: "absolute",
-    bottom: 0,
-    right: 0,
-    backgroundColor: "white",
-    alignItems: "center",
-    justifyContent: "center",
-    elevation: 1,
-    shadowOpacity: 0.2,
-    shadowOffset: { height: 1 },
-  },
-});
-
-function ProfilePhoto({ img }) {
-  return (
-    <View style={styles.profilePhotoContainer}>
-      <Icon name="md-person" style={{ size: 50, color: "white" }} />
-      <Image style={styles.profilePhoto} source={{ uri: img?.uri }} />
-      <View style={styles.editProfilePhotoBadge}>
-        <Icon
-          name="md-camera"
-          style={{
-            size: 20,
-          }}
-        />
-      </View>
-    </View>
-  );
-}
-
-function ProfileEditor({ navigation, route, viewer }) {
+function ProfileEditor({ relay, navigation, route, viewer }) {
   const window = useWindowDimensions();
-  const [name, setName] = useState(viewer.viewer.name);
-  const image = route.params?.image;
+
+  const initialName = viewer.viewer.name;
+  const initialProfile = viewer.viewer.profile?.src;
+
+  const [name, setName] = useState(initialName);
+  const image = route.params?.image ?? { uri: initialProfile };
+
+  function isEdited() {
+    return name !== initialName || image.uri !== initialProfile;
+  }
+
+  async function updateProfile() {
+    const formData = new FormData();
+
+    formData.append("file", {
+      uri: image.uri,
+      type: "image/png",
+      name: "profile.png",
+    });
+
+    const resp = await fetch("http://192.168.0.3:4000/user-upload", {
+      method: "POST",
+      body: formData,
+      headers: {
+        Authorization: `Bearer ${await getToken()}`,
+      },
+    });
+
+    if (resp.ok) {
+      const { imageId } = await resp.json();
+
+      // TODO: back
+      await ModifyUserMutation.commit(relay.environment, {
+        name,
+        profile: imageId,
+      });
+
+      navigation.navigate("ProfileHome");
+    }
+  }
 
   useEffect(() => {
     navigation.setOptions({
@@ -79,19 +71,20 @@ function ProfileEditor({ navigation, route, viewer }) {
       ),
       headerRight: ({ tintColor }) => (
         <HeaderButton
+          disabled={!isEdited()}
           name="md-checkmark"
           style={{ color: tintColor }}
-          onPress={() => console.log("complete")}
+          onPress={updateProfile}
         />
       ),
     });
-  }, []);
+  }, [name, image]);
 
   return (
     <ScrollView style={{ width: window.width, backgroundColor: "white" }}>
       <Stack style={{ gap: 20, padding: 16 }}>
         <TouchableOpacity onPress={() => navigation.push("ImagePicker")}>
-          <ProfilePhoto img={image} />
+          <ProfilePhoto editable img={image} />
         </TouchableOpacity>
 
         <Stack style={{ flexDirection: "row", gap: 10 }}>
@@ -130,6 +123,11 @@ const FragmentContainer = createRefetchContainer(ProfileEditor, {
         id
         userId
         name
+        profile {
+          id
+          imageId
+          src
+        }
       }
     }
   `,
