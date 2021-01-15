@@ -60,7 +60,7 @@ export async function getCollections(
   { userId },
   sort = [
     { sortBy: "goods.event.date", order: -1 },
-    { sortBy: "name", order: 1 },
+    { sortBy: "goods.name", order: 1 },
   ]
 ) {
   // TODO: Sort by various criterion
