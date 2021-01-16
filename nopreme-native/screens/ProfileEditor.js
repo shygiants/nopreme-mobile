@@ -42,6 +42,7 @@ function ProfileEditor({ relay, navigation, route, viewer }) {
       name: "profile.png",
     });
 
+    // TODO: host as env
     const resp = await fetch("http://192.168.0.3:4000/user-upload", {
       method: "POST",
       body: formData,

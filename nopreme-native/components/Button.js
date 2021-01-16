@@ -7,6 +7,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 18,
+    alignItems: "center",
   },
   text: {
     color: "white",

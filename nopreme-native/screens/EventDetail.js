@@ -61,10 +61,18 @@ function EventDetail({ navigation, route, relay, viewer }) {
         options={[
           {
             title: langCtx.dictionary.reportIncorrect,
-            onSelect: () => console.log("report"),
+            onSelect: () => {
+              setModalVisible(false);
+
+              navigation.push("Reporter", {
+                screen: "EventReporter",
+                params: { eventId: event.eventId },
+              });
+            },
           },
         ]}
       />
+
       <Stack style={StyleSheet.compose(styles.container, { gap: 10 })}>
         <View style={{ flexDirection: "row" }}>
           <Badge text={getEventName(event.type)} />

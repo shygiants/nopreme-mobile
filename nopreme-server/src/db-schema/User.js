@@ -11,6 +11,7 @@ const userSchema = new mongoose.Schema({
   name: {
     type: String,
     index: true,
+    unique: true,
   },
   profile: {
     type: Schema.Types.ObjectId,
@@ -74,6 +75,7 @@ export async function addUser({
 }
 
 export async function modifyUser({ _id, name, profile }) {
+  // TODO: Resolve unique username issue: https://mongoosejs.com/docs/validation.html#the-unique-option-is-not-a-validator
   const update = { name, profile };
 
   const modifiedUser = await User.findOneAndUpdate(
