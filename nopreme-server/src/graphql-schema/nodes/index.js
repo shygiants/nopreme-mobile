@@ -37,6 +37,8 @@ import {
 } from "../../db-schema/Collection";
 import { Wish, getWishObj } from "../../db-schema/Wish";
 import { Posession, getPosessionObj } from "../../db-schema/Posession";
+import { Report, getReportById } from "../../db-schema/Report";
+import ReportTypes from "../assets/enum/reportTypes.json";
 
 const SEPARATOR = "-";
 
@@ -58,6 +60,8 @@ export const { nodeInterface, nodeField } = nodeDefinitions(
         return await getGoodsById({ _id: id });
       case "Item":
         return await getItemById({ _id: id });
+      case "EventReport":
+        return await getReportById({ _id: id });
       case "Collection":
         [goodsId, userId] = id.split(SEPARATOR);
         const collection = await getCollectionByIds({ goodsId, userId });
@@ -94,7 +98,14 @@ export const { nodeInterface, nodeField } = nodeDefinitions(
     else if (obj instanceof Wish) return GraphQLWish;
     else if (obj instanceof Posession) return GraphQLPosession;
     else if (obj instanceof Profile) return GraphQLProfile;
-    else throw "no supported type";
+    else if (obj instanceof Report) {
+      switch (obj.type) {
+        case "EVENT_INCORRECT_INFO":
+          return GraphQLEventReport;
+        default:
+          throw "no supported type";
+      }
+    } else throw "no supported type";
   }
 );
 
@@ -214,6 +225,20 @@ export const {
 } = connectionDefinitions({
   name: "Collection",
   nodeType: GraphQLCollection,
+});
+
+export const GraphQLEventReport = new GraphQLObjectType({
+  name: "EventReport",
+  fields: require("./EventReport").default,
+  interfaces: [nodeInterface],
+});
+
+export const {
+  connectionType: EventReportConnection,
+  edgeType: GraphQLEventReportEdge,
+} = connectionDefinitions({
+  name: "EventReport",
+  nodeType: GraphQLEventReport,
 });
 
 class Admin {}

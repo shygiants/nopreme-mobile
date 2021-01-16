@@ -8,6 +8,7 @@ import Stack from "../components/Stack";
 import HeaderButton from "../components/HeaderButton";
 import ListItem from "../components/ListItem";
 import { getEventName } from "../utils/enum";
+import AddEventReportMutation from "../relay/mutations/AddEventReportMutation";
 
 const styles = StyleSheet.create({
   title: { fontSize: 20, fontWeight: "bold" },
@@ -21,12 +22,18 @@ const styles = StyleSheet.create({
   },
 });
 
-function EventReporter({ navigation, route, viewer }) {
+function EventReporter({ relay, navigation, viewer }) {
   const { event } = viewer;
   const [comment, setComment] = useState();
 
   async function report() {
     // TODO: Mutation
+    await AddEventReportMutation.commit(relay.environment, {
+      eventId: event.eventId,
+      contents: comment,
+    });
+
+    navigation.goBack();
   }
 
   useEffect(() => {

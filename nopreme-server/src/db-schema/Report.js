@@ -1,20 +1,7 @@
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
-const ReportType = [
-  {
-    name: "이벤트 잘못된 정보 제보",
-    value: "EVENT_INCORRECT_INFO",
-  },
-  {
-    name: "굿즈 잘못된 정보 제보",
-    value: "GOODS_INCORRECT_INFO",
-  },
-  {
-    name: "버그 제보",
-    value: "BUG",
-  },
-];
+import ReportTypes from "../assets/enum/reportTypes.json";
 
 const reportSchema = new mongoose.Schema({
   reporter: {
@@ -23,7 +10,7 @@ const reportSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ReportType.map(({ value }) => value),
+    enum: ReportTypes.map(({ value }) => value),
   },
   event: {
     type: Schema.Types.ObjectId,
@@ -41,3 +28,26 @@ const reportSchema = new mongoose.Schema({
 });
 
 export const Report = mongoose.model("Report", reportSchema);
+
+export async function getReportById({ _id }) {
+  return await Report.findById(_id).exec();
+}
+
+export async function addReport({ reporter, type, event, goods, contents }) {
+  return await new Report({
+    reporter,
+    type,
+    event,
+    goods,
+    contents,
+  }).save();
+}
+
+export async function getEventReports(
+  sort = { sortBy: "createdAt", order: -1 }
+) {
+  const { sortBy, order } = sort;
+  return await Report.find()
+    .sort({ [sortBy]: order })
+    .exec();
+}

@@ -1,0 +1,14 @@
+[
+  {
+    "name": "이벤트 잘못된 정보 제보",
+    "value": "EVENT_INCORRECT_INFO"
+  },
+  {
+    "name": "굿즈 잘못된 정보 제보",
+    "value": "GOODS_INCORRECT_INFO"
+  },
+  {
+    "name": "버그 제보",
+    "value": "BUG"
+  }
+]

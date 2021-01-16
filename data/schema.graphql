@@ -298,6 +298,7 @@ type Mutation {
   addCollection(input: AddCollectionInput!): AddCollectionPayload
   updateCollection(input: UpdateCollectionInput!): UpdateCollectionPayload
   modifyUser(input: ModifyUserInput!): ModifyUserPayload
+  addEventReport(input: AddEventReportInput!): AddEventReportPayload
 }
 
 type AddGroupPayload {
@@ -532,5 +533,33 @@ type UserEdge {
 input ModifyUserInput {
   name: String
   profile: ID
+  clientMutationId: String
+}
+
+type AddEventReportPayload {
+  eventReportEdge: EventReportEdge!
+  clientMutationId: String
+}
+
+"""An edge in a connection."""
+type EventReportEdge {
+  """The item at the end of the edge"""
+  node: EventReport
+
+  """A cursor for use in pagination"""
+  cursor: String!
+}
+
+type EventReport implements Node {
+  """The ID of an object"""
+  id: ID!
+  reporter: User!
+  event: Event!
+  contents: String
+}
+
+input AddEventReportInput {
+  eventId: ID!
+  contents: String
   clientMutationId: String
 }
