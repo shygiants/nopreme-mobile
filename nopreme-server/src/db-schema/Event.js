@@ -22,6 +22,10 @@ const eventSchema = new mongoose.Schema({
     type: String,
     enum: EventTypes.map(({ value }) => value),
   },
+  published: {
+    type: Boolean,
+    default: false,
+  },
   createdAt: {
     type: Date,
     default: Date.now,
@@ -55,8 +59,8 @@ export async function getEvents(
     .exec();
 }
 
-export async function modifyEvent({ _id, name, date, img, type }) {
-  const update = { name, date, img, type };
+export async function modifyEvent({ _id, name, date, img, type, published }) {
+  const update = { name, date, img, type, published };
 
   const modifiedEvent = await Event.findOneAndUpdate(
     { _id },

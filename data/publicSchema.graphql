@@ -106,6 +106,7 @@ type Event implements Node {
   name: String!
   date: String!
   type: String!
+  published: Boolean!
   numGoods(artistName: String!): Int
 }
 

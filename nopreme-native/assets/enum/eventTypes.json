@@ -7,7 +7,7 @@
     "name": "리리이베",
     "value": "RELEASE_EVENT"
   },
-  { "name": "콘서트 DVD/BD 발매", "value": "LIVE" },
+  { "name": "콘서트 DVD/BR 발매", "value": "LIVE" },
   {
     "name": "콘서트",
     "value": "CONCERT"

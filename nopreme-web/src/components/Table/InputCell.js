@@ -6,6 +6,7 @@ import DatePicker from "../DatePicker";
 import ImageInput from "../ImageInput";
 import OptionInput from "../OptionInput";
 import NumberInput from "../NumberInput";
+import CheckboxInput from "../CheckboxInput";
 
 export default function InputCell({
   name,
@@ -59,6 +60,12 @@ export default function InputCell({
             value={value}
             onChange={onChange}
           />
+        </StyledTableCell>
+      );
+    case "boolean":
+      return (
+        <StyledTableCell key={property}>
+          <CheckboxInput name={property} checked={value} onChange={onChange} />
         </StyledTableCell>
       );
     default:

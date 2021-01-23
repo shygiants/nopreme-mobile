@@ -16,13 +16,17 @@ const mutation = graphql`
             imageId
             src
           }
+          published
         }
       }
     }
   }
 `;
 
-async function commit(environment, { eventId, name, date, type, img }) {
+async function commit(
+  environment,
+  { eventId, name, date, type, img, published }
+) {
   const response = await new Promise((resolve, reject) => {
     commitMutation(environment, {
       mutation,
@@ -33,6 +37,7 @@ async function commit(environment, { eventId, name, date, type, img }) {
           date,
           type,
           img,
+          published,
         },
       },
       onCompleted: resolve,

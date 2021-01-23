@@ -1,5 +1,11 @@
 import { globalIdField } from "graphql-relay";
-import { GraphQLID, GraphQLNonNull, GraphQLString, GraphQLInt } from "graphql";
+import {
+  GraphQLID,
+  GraphQLNonNull,
+  GraphQLString,
+  GraphQLInt,
+  GraphQLBoolean,
+} from "graphql";
 
 import { dateToStr } from "../../utils/date";
 import { GraphQLImage } from ".";
@@ -27,6 +33,10 @@ export default {
   },
   type: {
     type: new GraphQLNonNull(GraphQLString),
+  },
+  published: {
+    type: new GraphQLNonNull(GraphQLBoolean),
+    resolve: (event) => event?.published ?? false,
   },
   numGoods: {
     type: GraphQLInt,

@@ -85,6 +85,7 @@ type Event implements Node {
   name: String!
   date: String!
   type: String!
+  published: Boolean!
   numGoods(artistName: String!): Int
 }
 
@@ -398,6 +399,7 @@ input ModifyEventInput {
   date: String
   type: String
   img: ID
+  published: Boolean
   clientMutationId: String
 }
 

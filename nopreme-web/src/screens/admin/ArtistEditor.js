@@ -28,8 +28,8 @@ function ArtistEditor({
     );
   }
 
-  async function modifyEvent({ eventId, name, date, type, img }) {
-    console.log({ eventId, name, date, type, img });
+  async function modifyEvent({ eventId, name, date, type, img, published }) {
+    console.log({ eventId, name, date, type, img, published });
 
     const resp = await ModifyEventMutation.commit(relay.environment, {
       eventId,
@@ -37,6 +37,7 @@ function ArtistEditor({
       date,
       type,
       img,
+      published,
     });
   }
 
@@ -76,6 +77,7 @@ function ArtistEditor({
             type: "option",
             options: EventTypes,
           },
+          { property: "published", header: "공개", type: "boolean" },
         ]}
         data={admin.events.edges.map(({ node }) => node)}
         onAdd={(add) => addEvent({ ...add, img: add.img.imageId })}
@@ -121,6 +123,7 @@ export default createFragmentContainer(ArtistEditor, {
               imageId
               src
             }
+            published
           }
         }
       }
