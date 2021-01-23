@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Text, ScrollView, StyleSheet, TextInput } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { graphql, createRefetchContainer } from "react-relay";
 
+import { LanguageContext } from "../contexts/LanguageContext";
 import { createQueryRenderer } from "../relay";
 import Stack from "../components/Stack";
 import HeaderButton from "../components/HeaderButton";
@@ -23,6 +24,7 @@ const styles = StyleSheet.create({
 });
 
 function GoodsReporter({ relay, navigation, viewer }) {
+  const langCtx = useContext(LanguageContext);
   const { goods } = viewer;
   const [comment, setComment] = useState();
 
@@ -54,8 +56,8 @@ function GoodsReporter({ relay, navigation, viewer }) {
     <ScrollView style={{ width: window.width, backgroundColor: "white" }}>
       <StatusBar style={"dark"} />
       <Stack style={{ gap: 20, padding: 16 }}>
-        <Text style={styles.title}>잘못된 정보 제보</Text>
-        <Text>아래 굿즈에 잘못된 정보가 있을 경우 진행해주세요.</Text>
+        <Text style={styles.title}>{langCtx.dictionary.reportIncorrect}</Text>
+        <Text>{langCtx.dictionary.goodsReportInstruction}</Text>
         <ListItem
           img={goods.img.src}
           title={goods.name}
@@ -65,7 +67,7 @@ function GoodsReporter({ relay, navigation, viewer }) {
 
         <TextInput
           style={styles.comment}
-          placeholder="(선택) 기타 전달 사항"
+          placeholder={langCtx.dictionary.reportPlaceholder}
           multiline
           textAlignVertical="top"
           numberOfLines={10}

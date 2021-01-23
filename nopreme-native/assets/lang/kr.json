@@ -20,5 +20,8 @@
   "photocard": "포토카드",
   "photo": "생사진",
   "latest": "최근 순",
-  "latestEvent": "최근 이벤트 순"
+  "latestEvent": "최근 이벤트 순",
+  "eventReportInstruction": "아래 이벤트에 잘못된 정보가 있을 경우 진행해주세요.",
+  "goodsReportInstruction": "아래 굿즈에 잘못된 정보가 있을 경우 진행해주세요.",
+  "reportPlaceholder": "(선택) 기타 전달 사항"
 }
