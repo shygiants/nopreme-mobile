@@ -299,6 +299,7 @@ type Mutation {
   updateCollection(input: UpdateCollectionInput!): UpdateCollectionPayload
   modifyUser(input: ModifyUserInput!): ModifyUserPayload
   addEventReport(input: AddEventReportInput!): AddEventReportPayload
+  addGoodsReport(input: AddGoodsReportInput!): AddGoodsReportPayload
 }
 
 type AddGroupPayload {
@@ -560,6 +561,34 @@ type EventReport implements Node {
 
 input AddEventReportInput {
   eventId: ID!
+  contents: String
+  clientMutationId: String
+}
+
+type AddGoodsReportPayload {
+  goodsReportEdge: GoodsReportEdge!
+  clientMutationId: String
+}
+
+"""An edge in a connection."""
+type GoodsReportEdge {
+  """The item at the end of the edge"""
+  node: GoodsReport
+
+  """A cursor for use in pagination"""
+  cursor: String!
+}
+
+type GoodsReport implements Node {
+  """The ID of an object"""
+  id: ID!
+  reporter: User!
+  goods: Goods!
+  contents: String
+}
+
+input AddGoodsReportInput {
+  goodsId: ID!
   contents: String
   clientMutationId: String
 }

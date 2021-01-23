@@ -7,8 +7,8 @@ import { createQueryRenderer } from "../relay";
 import Stack from "../components/Stack";
 import HeaderButton from "../components/HeaderButton";
 import ListItem from "../components/ListItem";
-import { getEventName } from "../utils/enum";
-import AddEventReportMutation from "../relay/mutations/AddEventReportMutation";
+import { getGoodsName } from "../utils/enum";
+import AddGoodsReportMutation from "../relay/mutations/AddGoodsReportMutation";
 
 const styles = StyleSheet.create({
   title: { fontSize: 20, fontWeight: "bold" },
@@ -22,13 +22,13 @@ const styles = StyleSheet.create({
   },
 });
 
-function EventReporter({ relay, navigation, viewer }) {
-  const { event } = viewer;
+function GoodsReporter({ relay, navigation, viewer }) {
+  const { goods } = viewer;
   const [comment, setComment] = useState();
 
   async function report() {
-    await AddEventReportMutation.commit(relay.environment, {
-      eventId: event.eventId,
+    await AddGoodsReportMutation.commit(relay.environment, {
+      goodsId: goods.goodsId,
       contents: comment,
     });
 
@@ -55,12 +55,12 @@ function EventReporter({ relay, navigation, viewer }) {
       <StatusBar style={"dark"} />
       <Stack style={{ gap: 20, padding: 16 }}>
         <Text style={styles.title}>잘못된 정보 제보</Text>
-        <Text>아래 이벤트에 잘못된 정보가 있을 경우 진행해주세요.</Text>
+        <Text>아래 굿즈에 잘못된 정보가 있을 경우 진행해주세요.</Text>
         <ListItem
-          img={event.img.src}
-          title={event.name}
-          badgeTitle={getEventName(event.type)}
-          subTitle={event.date}
+          img={goods.img.src}
+          title={goods.name}
+          badgeTitle={getGoodsName(goods.type)}
+          subTitle={goods.event.name}
         />
 
         <TextInput
@@ -77,21 +77,24 @@ function EventReporter({ relay, navigation, viewer }) {
   );
 }
 
-const FragmentContainer = createRefetchContainer(EventReporter, {
+const FragmentContainer = createRefetchContainer(GoodsReporter, {
   viewer: graphql`
-    fragment EventReporter_viewer on Viewer
-    @argumentDefinitions(eventId: { type: "ID!" }) {
+    fragment GoodsReporter_viewer on Viewer
+    @argumentDefinitions(goodsId: { type: "ID!" }) {
       id
-      event(eventId: $eventId) {
+      goods(goodsId: $goodsId) {
         id
-        eventId
+        goodsId
         name
-        date
         type
         img {
           id
           imageId
           src
+        }
+        event {
+          id
+          name
         }
       }
     }
@@ -101,9 +104,9 @@ const FragmentContainer = createRefetchContainer(EventReporter, {
 export default createQueryRenderer(
   FragmentContainer,
   graphql`
-    query EventReporterQuery($eventId: ID!) {
+    query GoodsReporterQuery($goodsId: ID!) {
       viewer {
-        ...EventReporter_viewer @arguments(eventId: $eventId)
+        ...GoodsReporter_viewer @arguments(goodsId: $goodsId)
       }
     }
   `

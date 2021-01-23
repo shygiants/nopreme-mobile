@@ -43,11 +43,20 @@ export async function addReport({ reporter, type, event, goods, contents }) {
   }).save();
 }
 
-export async function getEventReports(
+export async function getReports(
+  { type },
   sort = { sortBy: "createdAt", order: -1 }
 ) {
   const { sortBy, order } = sort;
-  return await Report.find()
+  return await Report.find({ type })
     .sort({ [sortBy]: order })
     .exec();
+}
+
+export async function getEventReports() {
+  return await getReports({ type: "EVENT_INCORRECT_INFO" });
+}
+
+export async function getGoodsReports() {
+  return await getReports({ type: "GOODS_INCORRECT_INFO" });
 }

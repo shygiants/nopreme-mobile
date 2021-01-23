@@ -43,7 +43,7 @@ function ProfileEditor({ relay, navigation, route, viewer }) {
     });
 
     // TODO: host as env
-    const resp = await fetch("http://192.168.0.3:4000/user-upload", {
+    const resp = await fetch("http://shybook.local:4000/user-upload", {
       method: "POST",
       body: formData,
       headers: {

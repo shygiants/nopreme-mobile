@@ -2,6 +2,7 @@ import * as React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 
 import EventReporter from "../screens/EventReporter";
+import GoodsReporter from "../screens/GoodsReporter";
 
 const Stack = createStackNavigator();
 
@@ -27,6 +28,7 @@ export default function ReporterNavigator() {
       }}
     >
       <Stack.Screen name="EventReporter" component={EventReporter} />
+      <Stack.Screen name="GoodsReporter" component={GoodsReporter} />
     </Stack.Navigator>
   );
 }

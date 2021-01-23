@@ -173,7 +173,14 @@ function GoodsDetail({ relay, navigation, route, viewer }) {
   const options = [
     {
       title: langCtx.dictionary.reportIncorrect,
-      onSelect: () => setModalVisible(false),
+      onSelect: () => {
+        setModalVisible(false);
+
+        navigation.push("Reporter", {
+          screen: "GoodsReporter",
+          params: { goodsId: goods.goodsId },
+        });
+      },
     },
   ];
 
